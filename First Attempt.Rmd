@@ -19,8 +19,8 @@ summary(cars)
 
 ## Including Plots
 
-You can also embed plots, for example:
-
+git config --global user.name 'LukasLink'
+git config --global user.email '250295@live.de'
 ```{r pressure, echo=FALSE}
 plot(pressure)
 ```
