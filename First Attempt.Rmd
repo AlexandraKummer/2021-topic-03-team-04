@@ -4,6 +4,14 @@ author: "Lukas"
 date: "19 4 2021"
 output: html_document
 ---
+```{r}
+MS_Table <- read.table("D:/EIGENE DATEIEN/Downloads/RDeeP_A549_NS.csv", header=TRUE, row.names=1, sep = ";")
+
+```
+```{r}
+MS_Table
+```
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
