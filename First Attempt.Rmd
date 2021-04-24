@@ -122,7 +122,7 @@ Ctrl_Data = as.data.frame(Ctrl_Matrix)
 #Colnames
 
 for (i in 1:25) {
-  s = paste("Fraction ",i)
+  s = paste("Fraction",i,sep="_")
   colnames(Ctrl_Data)[i] = s
 }
 
@@ -137,7 +137,7 @@ for (i in 1:dim(Ctrl_Matrix)[1]) {
   } else {
     k_counter = k_counter + 1
   }
-  s = paste(rownames(Data_copy)[k]," Rep",k_counter)
+  s = paste(rownames(Data_copy)[k],"Rep",k_counter,sep="_")
   rownames(Ctrl_Data)[i] = s
 }
 
@@ -147,7 +147,7 @@ RNAse_Data = as.data.frame(RNAse_Matrix)
 #Colnames
 
 for (i in 1:25) {
-  s = paste("Fraction ",i)
+  s = paste("Fraction",i,sep="_")
   colnames(RNAse_Data)[i] = s
 }
 
@@ -162,10 +162,94 @@ for (i in 1:dim(RNAse_Matrix)[1]) {
   } else {
     k_counter = k_counter + 1
   }
-  s = paste(rownames(Data_copy)[k]," Rep",k_counter)
+  s = paste(rownames(Data_copy)[k],"Rep",k_counter,sep="_")
   rownames(RNAse_Data)[i] = s
 }
 RNAse_Data
+Ctrl_Data
 Data_copy
+
 ```
 
+Ich will ein Dataframe mit 6 Zeilen und 25 Spalten wo eine Zeile jeweils dem Totalen Protein Gehalt in einer Repition entspricht (3 für RNAse und 3 für Kontrolle)
+```{r}
+Total_Protein = matrix(ncol=25,nrow=6)
+
+for (j in 1:25) { # Alle Spalten werden durchgegangen
+  k = 1          # K nummeriert die Spalte in Ctrl_Data bzw. RNAse_Date
+  Protein_Sum = 0
+  while (k <= dim(Ctrl_Data)[1]){
+    Protein_Sum = Protein_Sum + Ctrl_Data[k,j] # Jede Dritte Zeile wird aufsummiert.
+    k = k + 3
+  }
+  Total_Protein[1,j]=Protein_Sum
+}
+## Wiederholung des Ganzen für die übrigen 5 Zeilen
+for (j in 1:25) {
+  k = 2
+  Protein_Sum = 0
+  while (k <= dim(Ctrl_Data)[1]){
+    Protein_Sum = Protein_Sum + Ctrl_Data[k,j]
+    k = k + 3
+  }
+  Total_Protein[2,j]=Protein_Sum
+}
+
+for (j in 1:25) {
+  k = 3
+  Protein_Sum = 0
+  while (k <= dim(Ctrl_Data)[1]){
+    Protein_Sum = Protein_Sum + Ctrl_Data[k,j]
+    k = k + 3
+  }
+  Total_Protein[3,j]=Protein_Sum
+}
+for (j in 1:25) { # Alle Spalten werden durchgegangen
+  k = 1          # K nummeriert die Spalte in Ctrl_Data bzw. RNAse_Date
+  Protein_Sum = 0
+  while (k <= dim(RNAse_Data)[1]){
+    Protein_Sum = Protein_Sum + RNAse_Data[k,j] # Jede Dritte Zeile wird aufsummiert.
+    k = k + 3
+  }
+  Total_Protein[4,j]=Protein_Sum
+}
+
+for (j in 1:25) {
+  k = 2
+  Protein_Sum = 0
+  while (k <= dim(RNAse_Data)[1]){
+    Protein_Sum = Protein_Sum + RNAse_Data[k,j]
+    k = k + 3
+  }
+  Total_Protein[5,j]=Protein_Sum
+}
+
+for (j in 1:25) {
+  k = 3
+  Protein_Sum = 0
+  while (k <= dim(RNAse_Data)[1]){
+    Protein_Sum = Protein_Sum + RNAse_Data[k,j]
+    k = k + 3
+  }
+  Total_Protein[6,j]=Protein_Sum
+}  
+
+Total_Protein_Data = as.data.frame(Total_Protein)
+colnames(Total_Protein_Data)=colnames(RNAse_Data)
+rownames(Total_Protein_Data)=c("Ctrl_Rep1","Ctrl_Rep2","Ctrl_Rep3","RNAse_Rep1","RNAse_Rep2","RNAse_Rep3")
+
+Total_Protein_Data
+```
+Barplot für die einzelnen Repetitions
+
+
+```{r}
+vec_25=c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25)
+
+for (i in 1:6) {
+barplot_vector = as.numeric(Total_Protein_Data[i,])
+names(barplot_vector) = vec_25
+barplot(barplot_vector) 
+}
+
+```
