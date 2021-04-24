@@ -4,24 +4,118 @@ author: "Lukas"
 date: "19 4 2021"
 output: html_document
 ---
+Loading the data and the libraries.
 ```{r}
 Raw_Data<- read.table("c://Data_Analysis//RDeeP_A549_NS.csv", header=TRUE, row.names=1, sep = ";")
+
+library("tidyverse")
+library("dplyr")
+library("ggplot2")
+
 Data_copy = Raw_Data
 colnames(Data_copy)
 ```
 Reihenfolge der Columns: Aufgeteilt nach Fractions -> Ctrl_Rep1, RNAse_Rep1, Ctrl_Rep2,RNAse_Rep2, usw. also Fractions und dann wechselnd Ctrl und RNAse durch alle 3 Repetitions durch.
 
-In dem unterstehenden Chunk will ich: 2 dataframes erstellen mit 3x3680 Zeilen und 25 spalten, wo einmal alle CTRl repetitions und einmal alle RNAse repititons als eigene zeile drin sind und die Spalten den 25 fractions entsprechen
+In dem unterstehenden Chunk will ich: 2 dataframes erstellen mit 3x3680 Zeilen und 25 spalten, wo einmal alle CTRl repetitions und einmal alle RNAse repititons als eigene zeile drin sind und die Spalten den 25 fractions entsprechen.
+
+Zeile X in der Raw data entspricht nun Zeilen X*3-2 bis X*3 im neuen Dataset
+
 
 ```{r}
+Ctrl_Matrix = matrix(nrow = 3*3680, ncol=25)
+ 
+k = 1 ## für die Zeilen in der Raw Tabelle.
+k_counter = 0 ##Für die Repetition die Gerade betrachtet wird (1,2 oder 3)
+for (i in 1:dim(Ctrl_Matrix)[1]) { ##Für die Zeilen in der Neuen Matrix
+  if (k_counter == 3){ ##Für Je 3 Zeilen in der alten Matrix wird 3 mal die selbe Zeile aus dem Raw dataframe verwendet.
+    k = k + 1
+    k_counter = 1
+  } else {
+    k_counter = k_counter + 1
+  }
+  
+  if (k_counter == 0 | k_counter == 1 ) { ##Repetion 1
+    j = 1
+    l = 1
+    while (j <= dim(Ctrl_Matrix)[2]) {
+      Ctrl_Matrix[i,j] = Data_copy[k,l]
+      l = l + 6
+      j = j + 1
+    }
+  }
+  if (k_counter == 2) { ##Repetion 2
+    j = 1
+    l = 3
+    while (j <= dim(Ctrl_Matrix)[2]) {
+      Ctrl_Matrix[i,j] = Data_copy[k,l]
+      l = l + 6
+      j = j + 1
+    }
+  }
+  if (k_counter == 3) { ##Repetion 3
+    j = 1
+    l = 5
+    while (j <= dim(Ctrl_Matrix)[2]) {
+      Ctrl_Matrix[i,j] = Data_copy[k,l]
+      l = l + 6
+      j = j + 1
+    }
+  }
+  
+}
+Ctrl_Matrix[13:15,1:25]
+Data_copy[5,]
+```
 
+Vergleich der Beiden Matritzen mit dem Original Dataset hat ergeben, dass die Umstrukturierung erfolg hatte.
 
-
+```{r}
+RNAse_Matrix = matrix(nrow = 3*3680, ncol=25)
+ 
+k = 1 ## für die Zeilen in der Raw Tabelle.
+k_counter = 0 ##Für die Repetition die Gerade betrachtet wird (1,2 oder 3)
+for (i in 1:dim(RNAse_Matrix)[1]) { ##Für die Zeilen in der Neuen Matrix
+  if (k_counter == 3){ ##Für Je 3 Zeilen in der alten Matrix wird 3 mal die selbe Zeile aus dem Raw dataframe verwendet.
+    k = k + 1
+    k_counter = 1
+  } else {
+    k_counter = k_counter + 1
+  }
+  
+  if (k_counter == 0 | k_counter == 1 ) { ##Repetion 1
+    j = 1
+    l = 2
+    while (j <= dim(RNAse_Matrix)[2]) {
+      RNAse_Matrix[i,j] = Data_copy[k,l]
+      l = l + 6
+      j = j + 1
+    }
+  }
+  if (k_counter == 2) { ##Repetion 2
+    j = 1
+    l = 4
+    while (j <= dim(RNAse_Matrix)[2]) { 
+      RNAse_Matrix[i,j] = Data_copy[k,l]
+      l = l + 6
+      j = j + 1
+    }
+  }
+  if (k_counter == 3) { ##Repetion 3
+    j = 1
+    l = 6
+    while (j <= dim(RNAse_Matrix)[2]) {
+      RNAse_Matrix[i,j] = Data_copy[k,l]
+      l = l + 6
+      j = j + 1
+    }
+  }
+}
 ```
 
 
 ```{r}
-MS_Table
+Data_copy[5,]
 ```
 
 
