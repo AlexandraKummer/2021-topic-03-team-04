@@ -113,8 +113,59 @@ for (i in 1:dim(RNAse_Matrix)[1]) { ##Für die Zeilen in der Neuen Matrix
 }
 ```
 
+Jetzt will ich aus meinen 2 Matrizen dataframes mit row und col names machen.
 
 ```{r}
-sum(is.na(Ctrl_Matrix))
+##Ctrl Dataframe
+Ctrl_Data = as.data.frame(Ctrl_Matrix)
+
+#Colnames
+
+for (i in 1:25) {
+  s = paste("Fraction ",i)
+  colnames(Ctrl_Data)[i] = s
+}
+
+#Rownames
+
+k = 1 ## für die Zeilen in der Raw Tabelle.
+k_counter = 0 ##Für die Repetition die Gerade betrachtet wird (1,2 oder 3)
+for (i in 1:dim(Ctrl_Matrix)[1]) {
+  if (k_counter == 3){ ##Für Je 3 Zeilen in der alten Matrix wird 3 mal die selbe Zeile aus dem Raw dataframe verwendet.
+    k = k + 1
+    k_counter = 1
+  } else {
+    k_counter = k_counter + 1
+  }
+  s = paste(rownames(Data_copy)[k]," Rep",k_counter)
+  rownames(Ctrl_Data)[i] = s
+}
+
+##RNAse Dataframe
+RNAse_Data = as.data.frame(RNAse_Matrix)
+
+#Colnames
+
+for (i in 1:25) {
+  s = paste("Fraction ",i)
+  colnames(RNAse_Data)[i] = s
+}
+
+#Rownames
+
+k = 1 ## für die Zeilen in der Raw Tabelle.
+k_counter = 0 ##Für die Repetition die Gerade betrachtet wird (1,2 oder 3)
+for (i in 1:dim(RNAse_Matrix)[1]) {
+  if (k_counter == 3){ ##Für Je 3 Zeilen in der alten Matrix wird 3 mal die selbe Zeile aus dem Raw dataframe verwendet.
+    k = k + 1
+    k_counter = 1
+  } else {
+    k_counter = k_counter + 1
+  }
+  s = paste(rownames(Data_copy)[k]," Rep",k_counter)
+  rownames(RNAse_Data)[i] = s
+}
+RNAse_Data
+Data_copy
 ```
 
