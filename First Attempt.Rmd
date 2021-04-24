@@ -5,8 +5,9 @@ date: "19 4 2021"
 output: html_document
 ---
 ```{r}
-MS_Table <- read.table("D:/EIGENE DATEIEN/Downloads/RDeeP_A549_NS.csv", header=TRUE, row.names=1, sep = ";")
-
+Raw_Data<- read.table("c://Data_Analysis//RDeeP_A549_NS.csv", header=TRUE, row.names=1, sep = ";")
+Data_copy = Raw_Data
+colnames(Data_copy)
 ```
 ```{r}
 MS_Table
