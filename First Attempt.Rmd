@@ -9,6 +9,9 @@ Raw_Data<- read.table("c://Data_Analysis//RDeeP_A549_NS.csv", header=TRUE, row.n
 Data_copy = Raw_Data
 colnames(Data_copy)
 ```
+Reihenfolge der Columns: Aufgeteilt nach Fractions -> Ctrl_Rep1, RNAse_Rep1, Ctrl_Rep2,RNAse_Rep2, usw. also Fractions und dann wechselnd Ctrl und RNAse durch alle 3 Repetitions durch.
+
+
 ```{r}
 MS_Table
 ```
