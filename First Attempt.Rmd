@@ -253,3 +253,11 @@ barplot(barplot_vector)
 }
 
 ```
+Comparision of Ctrl group and RNAse um unterschiede zu finden, wo im RNAse dataset mehr als 1000 protein wo im Ctrl dataset mehr als 1000 protein, und dann vergleich ob dies an den selben stellen der fall ist.
+```{r}
+logic_ctrl <- Ctrl_Data > 1000
+logic_RNAse <- RNAse_Data > 1000
+logic_compare <- logic_ctrl == logic_RNAse
+View(logic_compare)
+```
+
