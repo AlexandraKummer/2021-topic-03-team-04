@@ -11,6 +11,14 @@ colnames(Data_copy)
 ```
 Reihenfolge der Columns: Aufgeteilt nach Fractions -> Ctrl_Rep1, RNAse_Rep1, Ctrl_Rep2,RNAse_Rep2, usw. also Fractions und dann wechselnd Ctrl und RNAse durch alle 3 Repetitions durch.
 
+In dem unterstehenden Chunk will ich: 2 dataframes erstellen mit 3x3680 Zeilen und 25 spalten, wo einmal alle CTRl repetitions und einmal alle RNAse repititons als eigene zeile drin sind und die Spalten den 25 fractions entsprechen
+
+```{r}
+
+
+
+```
+
 
 ```{r}
 MS_Table
