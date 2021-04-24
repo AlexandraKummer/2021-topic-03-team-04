@@ -13,7 +13,7 @@ library("dplyr")
 library("ggplot2")
 
 Data_copy = Raw_Data
-colnames(Data_copy)
+
 ```
 Reihenfolge der Columns: Aufgeteilt nach Fractions -> Ctrl_Rep1, RNAse_Rep1, Ctrl_Rep2,RNAse_Rep2, usw. also Fractions und dann wechselnd Ctrl und RNAse durch alle 3 Repetitions durch.
 
@@ -115,28 +115,6 @@ for (i in 1:dim(RNAse_Matrix)[1]) { ##Für die Zeilen in der Neuen Matrix
 
 
 ```{r}
-Data_copy[5,]
+sum(is.na(Ctrl_Matrix))
 ```
 
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## R Markdown
-
-does this work?
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-git config --global user.name 'LukasLink'
-git config --global user.email '250295@live.de'
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
