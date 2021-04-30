@@ -20,14 +20,14 @@ min_max_mean_func <- function(x){
 }
 
 #RNAse Factor df         
-RNAse_frac_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+RNAse_frac_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data)) #creating a dataframe to save results too
 
-n <-2
-while (n < 150){
-    temp_df <- data_frame(Raw_Data[,n],Raw_Data[,n+2],Raw_Data[,n+4])  
-    Output_df <-data_frame(apply(temp_df,1,min_max_mean_func))
-    ctrl_frac_df <- cbind(RNAse_frac_df,Output_df)
-    n <- n + 6
+n <-2 # for RNAse n = 2 for ctrl n =1 corresponding to position in dataframe
+while (n < 150){ # this will iterate trough all the fractions
+    temp_df <- data_frame(Raw_Data[,n],Raw_Data[,n+2],Raw_Data[,n+4])  # a temporary df for sotring the 3 reps of each fraction
+    Output_df <-data_frame(apply(temp_df,1,min_max_mean_func))     #the function for comparing (max-min)/mean is applied across the rows apply(...,1,..) for rows 2 for cols
+    RNAse_frac_df <- cbind(RNAse_frac_df,Output_df)           #each run through adds a colum to RNAse_frac_df, we end with 26 cols
+    n <- n + 6     # the counter is increased to select the next fraction
 }
 colnames(RNAse_frac_df,paste("frac",0:25, sep = "_")) # error here ? not for today though 
 
