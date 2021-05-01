@@ -1,0 +1,63 @@
+---
+title: "Izar Code"
+author: "Izar"
+date: "1 5 2021"
+output: html_document
+---
+
+#this code turns out two dfs that have the ratio of the difference between the maximum and minimum values and their mean in a set
+# of 3 repititions in a fraction orderd by prtoein by fraction this will help us analyse the data nd see which
+# threshhold we want to set for eliminating points of data or merely selecting points of data
+# furter steps include: calculating the mean and sd of the ratios
+#                       evaluating the impact of NAs
+#                       selecting protein x fraction where data is significant
+#                       removing insignificant data from set
+
+
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+
+#loading data into Raw_Data dataframe
+Raw_Data<- read.table("c://Data_Analysis//RDeeP_A549_NS.csv", header=TRUE, row.names=1, sep = ";")
+
+#function for ratio of max-min to mean allows setting of univeral limit
+min_max_mean_func <- function(x){
+  (max(x)-min(x))/mean(x)
+}
+```
+
+```{r}
+
+#RNAse Factor df         
+RNAse_frac_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data)) #creating a dataframe to save results too
+
+n <-2 # for RNAse n = 2 for ctrl n =1 corresponding to position in dataframe
+while (n < 150){ # this will iterate trough all the fractions
+
+    temp_df <- data_frame(Raw_Data[,n],Raw_Data[,n+2],Raw_Data[,n+4])  # a temporary df for sotring the 3 reps of each fraction
+    
+    Output_df <-data_frame(apply(temp_df,1,min_max_mean_func))     #the function for comparing (max-min)/mean is applied across the rows apply(...,1,..) for rows 2 for cols
+    
+    RNAse_frac_df <- cbind(RNAse_frac_df,Output_df)           #each run through adds a colum to RNAse_frac_df, we end with 26 cols
+    
+    n <- n + 6     # the counter is increased to select the next fraction
+}
+colnames(RNAse_frac_df,paste("frac",0:25, sep = "_")) # error here ? not for today though 
+```
+
+
+```{r}
+#Control Factor df
+ctrl_frac_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+n <-1
+while (n < 150){
+    temp_df <- data_frame(Raw_Data[,n],Raw_Data[,n+2],Raw_Data[,n+4]) 
+    Output_df <-data_frame(apply(temp_df,1,min_max_mean_func))
+    ctrl_frac_df <- cbind(ctrl_frac_df,Output_df)
+    n <- n + 6
+}
+colnames(ctrl_frac_df,paste("frac",0:25, sep = "_")) #error here too 
+```
