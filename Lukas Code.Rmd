@@ -266,9 +266,12 @@ Total_Protein_Sum = rowSums(Total_Protein_Data) # Calculate the Total amount of 
 Total_Protein_Sum
 barplot(Total_Protein_Sum)
 
+
+
+
 RNAse_Data_norm = RNAse_Data
 i = 1
-while (i <= dim(RNAse_Data)[1]) {
+while (i <= dim(RNAse_Data)[1]) { #Alle Zeilen Durchgehen
   for (j in 1:25) { # Teile alle Fractions of Rep1 durch Rep1 total protein sum.
     RNAse_Data_norm[i,j] = RNAse_Data[i,j]/Total_Protein_Sum[4]
   }
@@ -279,7 +282,7 @@ while (i <= dim(RNAse_Data)[1]) {
   }
   i = i+1
   
-  for (j in 1:25) {# Teile alle Fractions of Rep2 durch Rep2 total protein sum.
+  for (j in 1:25) {# Teile alle Fractions of Rep3 durch Rep3 total protein sum.
     RNAse_Data_norm[i,j] = RNAse_Data[i,j]/Total_Protein_Sum[4]
   }
   i = i+1
@@ -288,7 +291,7 @@ while (i <= dim(RNAse_Data)[1]) {
 # Jetzt das selbe nochmal für Ctrl
 Ctrl_Data_norm = Ctrl_Data
 i = 1
-while (i <= dim(Ctrl_Data)[1]) {
+while (i <= dim(Ctrl_Data)[1]) { #Alle Zeilen Durchgehen
   for (j in 1:25) { # Teile alle Fractions of Rep1 durch Rep1 total protein sum.
     Ctrl_Data_norm[i,j] = Ctrl_Data[i,j]/Total_Protein_Sum[1]
   }
@@ -299,10 +302,42 @@ while (i <= dim(Ctrl_Data)[1]) {
   }
   i = i+1
   
-  for (j in 1:25) {# Teile alle Fractions of Rep2 durch Rep2 total protein sum.
+  for (j in 1:25) {# Teile alle Fractions of Rep3 durch Rep3 total protein sum.
     Ctrl_Data_norm[i,j] = Ctrl_Data[i,j]/Total_Protein_Sum[3]
   }
   i = i+1
 }
+```
+Eine Dataframe "Total_Protein_norm" wird erstellt, in dem die totale Protein Summe der einzelnen Fractions durch den Protzentualen Proteinanteil vom total Protein amount in der gesamten Repetition erstetzt wurde.
+
+```{r}
+Total_Protein_norm = Total_Protein_Data #Kopiere Total Protein Data
+Total_Protein_Data 
+Total_Protein_Sum
+
+Total_Protein_norm = Total_Protein_norm/t(Total_Protein_Sum)
+Total_Protein_norm
+
+Total_Prot_norm_Rotated <- t(Total_Protein_norm)
+Total_Prot_norm_Rotated_df <- data.frame(Total_Prot_norm_Rotated)
+ggplot(Total_Prot_norm_Rotated_df, aes(x=1:25))+
+  geom_line(aes(y=Total_Prot_norm_Rotated_df[,1]),colour="blue")+
+  geom_line(aes(y=Total_Prot_norm_Rotated_df[,2]), colour="red")+
+  geom_line(aes(y=Total_Prot_norm_Rotated_df[,3]), colour = "green")+
+  ggtitle("Normalized Protein amounts of control repetition in every Fraction")+
+  xlab("Fractions")+
+  ylab("Normalized Protein Amount")+
+  scale_x_continuous(breaks=1:25)
+
+Total_Prot_norm_Rotated <- t(Total_Protein_norm)
+Total_Prot_norm_Rotated_df <- data.frame(Total_Prot_norm_Rotated)
+ggplot(Total_Prot_norm_Rotated_df, aes(x=1:25))+
+  geom_line(aes(y=Total_Prot_norm_Rotated_df[,4]),colour="blue")+
+  geom_line(aes(y=Total_Prot_norm_Rotated_df[,5]), colour="red")+
+  geom_line(aes(y=Total_Prot_norm_Rotated_df[,6]), colour = "green")+
+  ggtitle("Normalized Protein amounts of RNAse repetition in every Fraction")+
+  xlab("Fractions")+
+  ylab("Normalized Protein Amount")+
+  scale_x_continuous(breaks=1:25)
 ```
 
