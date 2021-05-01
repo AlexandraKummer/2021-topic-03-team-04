@@ -6,14 +6,22 @@ output: html_document
 ---
 
 ```{r}
-ggplot(Total_Protein_Data, aes(x= 1:25))+
-  geom_line(aes(y=Total_Protein_Data[1,], color="1"),linetype=1, size=2)+
-  geom_line(aes(y=Total_Protein_Data[2,], color="2"),linetype =1, size=2)+
-  geom_line(aes(y=Total_Protein_Data[3,], color="3"),linetype=1, size=2)
+Total_Prot_Rotated <- t(Total_Protein_Data)
+Total_Prot_Rotated_df <- data.frame(Total_Prot_Rotated)
+ggplot(Total_Prot_Rotated_df, aes(x=1:25))+
+  geom_line(aes(y=Total_Prot_Rotated_df[,1]),colour="blue")+
+  geom_line(aes(y=Total_Prot_Rotated_df[,2]), colour="red")+
+  geom_line(aes(y=Total_Prot_Rotated_df[,3]), colour = "green")+
+  scale_x_continuous(breaks=1:25)
 ```
 
 ```{r}
-
+ggplot(Total_Prot_Rotated_df, aes(x=1:25))+
+  geom_line(aes(y=Total_Prot_Rotated_df[,4]),colour="blue")+
+  geom_line(aes(y=Total_Prot_Rotated_df[,5]), colour="red")+
+  geom_line(aes(y=Total_Prot_Rotated_df[,6]), colour = "green")+
+  scale_x_continuous(breaks=1:25)
+```
 ```
 
 ```{r}
