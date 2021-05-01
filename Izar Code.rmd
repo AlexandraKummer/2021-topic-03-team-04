@@ -45,7 +45,7 @@ while (n < 150){ # this will iterate trough all the fractions
     
     n <- n + 6     # the counter is increased to select the next fraction
 }
-colnames(RNAse_frac_df,c(paste("frac",0:25, sep = "_")))
+colnames(RNAse_frac_df) = c(paste("frac",0:25, sep = "_"))
 
 RNAse_frac_df = RNAse_frac_df[,-1] #this code deletes the unnessecary first null colum
 ```
@@ -61,5 +61,7 @@ while (n < 150){
     ctrl_frac_df <- cbind(ctrl_frac_df,Output_df)
     n <- n + 6
 }
-colnames(ctrl_frac_df,c(paste("frac",0:25, sep = "_")))
+colnames(ctrl_frac_df) = c(paste("frac",0:25, sep = "_"))
+
+ctrl_frac_df = ctrl_frac_df[,-1] #this code deletes the unnessecary first null colum
 ```
