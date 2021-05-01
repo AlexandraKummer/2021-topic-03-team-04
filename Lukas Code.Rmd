@@ -261,3 +261,48 @@ logic_compare <- logic_ctrl == logic_RNAse
 View(logic_compare)
 ```
 
+```{r}
+Total_Protein_Sum = rowSums(Total_Protein_Data) # Calculate the Total amount of all protein in one repetition
+Total_Protein_Sum
+barplot(Total_Protein_Sum)
+
+RNAse_Data_norm = RNAse_Data
+i = 1
+while (i <= dim(RNAse_Data)[1]) {
+  for (j in 1:25) { # Teile alle Fractions of Rep1 durch Rep1 total protein sum.
+    RNAse_Data_norm[i,j] = RNAse_Data[i,j]/Total_Protein_Sum[4]
+  }
+  i = i+1
+  
+  for (j in 1:25) {# Teile alle Fractions of Rep2 durch Rep2 total protein sum.
+    RNAse_Data_norm[i,j] = RNAse_Data[i,j]/Total_Protein_Sum[5]
+  }
+  i = i+1
+  
+  for (j in 1:25) {# Teile alle Fractions of Rep2 durch Rep2 total protein sum.
+    RNAse_Data_norm[i,j] = RNAse_Data[i,j]/Total_Protein_Sum[4]
+  }
+  i = i+1
+}
+
+# Jetzt das selbe nochmal für Ctrl
+Ctrl_Data_norm = Ctrl_Data
+i = 1
+while (i <= dim(Ctrl_Data)[1]) {
+  for (j in 1:25) { # Teile alle Fractions of Rep1 durch Rep1 total protein sum.
+    Ctrl_Data_norm[i,j] = Ctrl_Data[i,j]/Total_Protein_Sum[1]
+  }
+  i = i+1
+  
+  for (j in 1:25) {# Teile alle Fractions of Rep2 durch Rep2 total protein sum.
+    Ctrl_Data_norm[i,j] = Ctrl_Data[i,j]/Total_Protein_Sum[2]
+  }
+  i = i+1
+  
+  for (j in 1:25) {# Teile alle Fractions of Rep2 durch Rep2 total protein sum.
+    Ctrl_Data_norm[i,j] = Ctrl_Data[i,j]/Total_Protein_Sum[3]
+  }
+  i = i+1
+}
+```
+
