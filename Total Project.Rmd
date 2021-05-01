@@ -1,0 +1,19 @@
+---
+title: "Total Project"
+author: "Izar, Lukas, Alex, Celina"
+date: "1 5 2021"
+output: html_document
+---
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
