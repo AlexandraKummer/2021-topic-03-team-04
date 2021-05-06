@@ -135,8 +135,55 @@ NOut_norm_RNAse_df = NOut_norm_RNAse_df[,-1]
 
 Removing Values based on if Outlier or not
 ```{r}
+#modifying the LO factor df  to remove any value above  (arbitrary) 1.5, setting all values < 1.5 = 1 and all values >1.5 = 0
+data_clean_func <- function(x,z,treshhold){ # x = data to clean # z = LOF output df RNASe or Ctrl #threshhold can be played around with for signifacance of data
+  treshhold_clean_func <- function(y){
+    if (y >= treshhold){
+      y <- 0
+    }else{
+      y <- 1
+    }
+  }
+  
+  binary_removal_df <- data.frame(apply(z,1,treshhold_clean_func))
+  
+  x*binary_removal_df
+  
+}
+# i realized we might want to set 0 to NA before doing data cleaning think about it later
+clean_RNAse_df <- data_clean_func(norm_RNAse,LOF_RNAse,1.5)
+clean_RNAse_df[clean_RNAse_df == 0] <- NA
+clean_Ctrl_df <- data_clean_func(norm_Ctrl,LOF_Ctrl,1.5)
+clean_Ctrl_df[clean_Ctrl_df == 0] <- NA
+
 
 ```
+
+
+mean of RNAse and Ctrl reps
+```{r}
+# want mean of the reps, so again n,n+1,n+2 apply mean function to a temproary dataframe by row 
+#result should be a 3680*25 df 
+mean_clean_RNAse_df <- for i in length(clean_RNAse_df){
+  
+}
+
+
+mean_clean_Ctrl_df <- for i in length(clean_Ctrl_df){
+  
+}
+
+```
+
+
+
+
+
+
+
+
+
+
 
 Comparison test between RNAse and Ctrl
 
@@ -145,15 +192,5 @@ running students t or other comparative stat test on ctrl vs RNAse data to see i
 
 ```
 
-
-
-
-TESTing
-
-```{r}
-
-qwer <- data.frame(c(8,9,3))
-LOF(qwer,2)
-```
 
 
