@@ -95,7 +95,7 @@ Now applying statistical
 DIXON test, LOF test with DMwR::lofactor function or selfmade test
 either want output df without outliers, or a outlier TRUE / FALSE matrix or a 0/1 matrix in same dim as norm dfs to get norm dfs without outliers
 
-Trying to apply LOF/lof
+Trying to apply LOF/lof   ##results in NoOut_norm_RNAse_df & NoOut_norm_Ctrl_df
 ```{r}
 library(DDoutlier)
 library(dbscan)
@@ -111,7 +111,7 @@ Error in FUN(newX[, i], ...) : x needs to be a matrix or a dist object!
 Error in if (k >= n || k < 1) { : missing value where TRUE/FALSE needed'
 
 #creating empty dataframe to store results
-NOut_norm_RNAse_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+NoOut_norm_RNAse_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
 'need to figure out how to save the results back into a 3680x150 df
  want to compare 3 values then make 3 colums and 3680 rows out of the resulting LOF vector
  then add them together to get a resulting df where the LOF factors coincide with the vaules
@@ -123,17 +123,17 @@ n <-1
 while (n < 75){
     temp_df <- data.frame(norm_RNAse[,n],norm_RNAse[,n+1],norm_RNAse[,n+2])
     Output_df <-data.frame(apply(temp_df,1,LOF_func))
-    NOut_norm_RNAse_df <- cbind(norm_ctrl_frac_df,Output_df)
+    NoOut_norm_RNAse_df <- cbind(NoOut_norm_RNAse_df,Output_df)
     n <- n + 3
 }
+NoOut_norm_RNAse_df = NoOut_norm_RNAse_df[,-1]
+colnames(NoOut_norm_RNAse_df) = c(colnames(norm_RNAse))# finish naming later
 
-colnames(NOut_norm_RNAse_df) = c(colnames(norm_RNAse))# finish naming later
-NOut_norm_RNAse_df = NOut_norm_RNAse_df[,-1]
 
 ```
 
 
-Removing Values based on if Outlier or not
+Removing Values based on if Outlier or not ##results in clean_RNAse_df & clean_Ctrl_df'
 ```{r}
 #modifying the LO factor df  to remove any value above  (arbitrary) 1.5, setting all values < 1.5 = 1 and all values >1.5 = 0
 data_clean_func <- function(x,z,treshhold){ # x = data to clean # z = LOF output df RNASe or Ctrl #threshhold can be played around with for signifacance of data
@@ -160,35 +160,47 @@ clean_Ctrl_df[clean_Ctrl_df == 0] <- NA
 ```
 
 
-mean of RNAse and Ctrl reps
+mean of RNAse and Ctrl reps  ## results in clean_mean_RNAse_df & clean_mean_Ctrl_df
 ```{r}
-# want mean of the reps, so again n,n+1,n+2 apply mean function to a temproary dataframe by row 
-#result should be a 3680*25 df 
-mean_clean_RNAse_df <- for i in length(clean_RNAse_df){
-  
+# creating mean_clean_RNAse_df 3860x25, normalized and cleaned of outlieres
+mean_clean_RNAse_df<- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+n<-2
+while (n < 75){
+    temp_df <- data.frame(clean_RNAse_df[,n],clean_RNAse_df[,n+1],clean_RNAse_df[,n+2])
+    Output_df <-data.frame(apply(temp_df,1,mean))
+    mean_clean_RNAse_df<- cbind(mean_clean_RNAse_df,Output_df)
+    n <- n + 3
 }
+colnames(mean_clean_RNAse_df) = c(paste("RNAse","frac",0:25, sep = "_"))
+mean_clean_RNAse_df = mean_clean_RNAse_df[,-1]
 
 
-mean_clean_Ctrl_df <- for i in length(clean_Ctrl_df){
-  
+# creating mean_clean_Ctrl_df 3860x25, normalized and cleaned of outlieres
+mean_clean_Ctrl_df<- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+n<-1
+while (n < 75){
+    temp_df <- data.frame(clean_Ctrl_df[,n],clean_Ctrl_df[,n+1],clean_Ctrl_df[,n+2])
+    Output_df <-data.frame(apply(temp_df,1,mean))
+    mean_clean_Ctrl_df<- cbind(mean_clean_Ctrl_df,Output_df)
+    n <- n + 3
 }
-
+colnames(mean_clean_Ctrl_df) = c(paste("Ctrl","frac",0:25, sep = "_"))
+mean_clean_Ctrl_df = mean_clean_Ctrl_df[,-1]
 ```
-
-
-
-
-
-
-
-
-
-
 
 Comparison test between RNAse and Ctrl
 
 running students t or other comparative stat test on ctrl vs RNAse data to see if significant difference
 ```{r}
+
+
+
+```
+
+
+focusing t test on changes in fractions 19-25 
+```{r}
+
 
 ```
 
