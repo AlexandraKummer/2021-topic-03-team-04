@@ -6,14 +6,14 @@ output: html_document
 ---
 
 #this code turns out two dfs that have the ratio of the difference between the maximum and minimum values and their mean in a set
-# of 3 repititions in a fraction orderd by prtoein by fraction this will help us analyse the data nd see which
+# of 3 repititions in a fraction orderd by protein by fraction this will help us analyse the data nd see which
 # threshhold we want to set for eliminating points of data or merely selecting points of data
 # furter steps include: calculating the mean and sd of the ratios
 #                       evaluating the impact of NAs
 #                       selecting protein x fraction where data is significant
 #                       removing insignificant data from set
 
-
+Loading Data and Packages
 
 ```{r}
 library(ggplot2)
@@ -30,7 +30,7 @@ min_max_mean_func <- function(x){
 ```
 
 ```{r}
-
+'
 #RNAse Factor df         
 RNAse_frac_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data)) #creating a dataframe to save results too
 
@@ -50,8 +50,8 @@ colnames(RNAse_frac_df) = c(paste("frac",0:25, sep = "_"))
 RNAse_frac_df = RNAse_frac_df[,-1] #this code deletes the unnessecary first null colum
 ```
 
-
 ```{r}
+'
 #Control Factor df
 ctrl_frac_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
 n <-1
@@ -65,3 +65,95 @@ colnames(ctrl_frac_df) = c(paste("frac",0:25, sep = "_"))
 
 ctrl_frac_df = ctrl_frac_df[,-1] #this code deletes the unnessecary first null colum
 ```
+
+
+Normalizing Protein data x/ntot
+```{r}
+
+T_P_S_df <- data.frame(Total_Protein_Sum)
+T_P_S_vec <-c(T_P_S_df[1,],T_P_S_df[4,],T_P_S_df[2,],T_P_S_df[5,],T_P_S_df[3,],T_P_S_df[6,])
+T_P_S_vec_div_func <- function(x){
+  x/T_P_S_vec
+}
+Norm_Data_df <- t(data.frame(apply(Raw_Data,1,T_P_S_vec_div_func)))
+
+
+```
+
+Creating seperate norm_RNAse and norm_Ctrl dfs
+```{r}
+# Normailized RNAse only
+RNAse_select_vec <- c(seq(from =2, to = 150, by = 2))
+norm_RNAse <-data.frame(Norm_Data_df[,RNAse_select_vec])
+
+#Normalized Ctrl only
+Ctrl_select_vec <- seq(from =1, to = 150, by = 2)
+norm_Ctrl <- data.frame(Norm_Data_df[,Ctrl_select_vec])
+```
+
+Now applying statistical
+DIXON test, LOF test with DMwR::lofactor function or selfmade test
+either want output df without outliers, or a outlier TRUE / FALSE matrix or a 0/1 matrix in same dim as norm dfs to get norm dfs without outliers
+
+Trying to apply LOF/lof
+```{r}
+library(DDoutlier)
+library(dbscan)
+
+LOF_func <-function(x){ #creating function usable in apply
+  lof(x,2)
+}
+
+#issues with applying DDoutlier::LOF and dbscan::lof 
+' data.frame(apply(data.frame(norm_RNAse[,1],norm_RNAse[,2],norm_RNAse[,3]),1,lof))
+Error in FUN(newX[, i], ...) : x needs to be a matrix or a dist object!
+ data.frame(apply(data.frame(norm_RNAse[,1],norm_RNAse[,2],norm_RNAse[,3]),1,LOF))
+Error in if (k >= n || k < 1) { : missing value where TRUE/FALSE needed'
+
+#creating empty dataframe to store results
+NOut_norm_RNAse_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+'need to figure out how to save the results back into a 3680x150 df
+ want to compare 3 values then make 3 colums and 3680 rows out of the resulting LOF vector
+ then add them together to get a resulting df where the LOF factors coincide with the vaules
+that the fractions have.
+step 1 seperate the Raw Data into RNAse and Ctrl each with 3680x75 now we have rep 1,2,3 next to each other
+step 2 apply(temp_vec,1,LOF_func) to a temp vec consisting of rep n,n+1,n+2
+step 3 save into empty df'
+n <-1
+while (n < 75){
+    temp_df <- data.frame(norm_RNAse[,n],norm_RNAse[,n+1],norm_RNAse[,n+2])
+    Output_df <-data.frame(apply(temp_df,1,LOF_func))
+    NOut_norm_RNAse_df <- cbind(norm_ctrl_frac_df,Output_df)
+    n <- n + 3
+}
+
+colnames(NOut_norm_RNAse_df) = c(colnames(norm_RNAse))# finish naming later
+NOut_norm_RNAse_df = NOut_norm_RNAse_df[,-1]
+
+```
+
+
+Removing Values based on if Outlier or not
+```{r}
+
+```
+
+Comparison test between RNAse and Ctrl
+
+running students t or other comparative stat test on ctrl vs RNAse data to see if significant difference
+```{r}
+
+```
+
+
+
+
+TESTing
+
+```{r}
+
+qwer <- data.frame(c(8,9,3))
+LOF(qwer,2)
+```
+
+
