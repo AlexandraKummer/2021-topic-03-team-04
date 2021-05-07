@@ -67,7 +67,7 @@ ctrl_frac_df = ctrl_frac_df[,-1] #this code deletes the unnessecary first null c
 ```
 
 
-Normalizing Protein data x/ntot
+Normalizing Protein data x/ntot   ##results in Norm_Data_df
 ```{r}
 
 T_P_S_df <- data.frame(Total_Protein_Sum)
@@ -80,7 +80,7 @@ Norm_Data_df <- t(data.frame(apply(Raw_Data,1,T_P_S_vec_div_func)))
 
 ```
 
-Creating seperate norm_RNAse and norm_Ctrl dfs
+Creating seperate RNAse and Ctrl dfs    ##results in norm_RNAse & norm_Ctrl
 ```{r}
 # Normailized RNAse only
 RNAse_select_vec <- c(seq(from =2, to = 150, by = 2))
@@ -188,9 +188,12 @@ colnames(mean_clean_Ctrl_df) = c(paste("Ctrl","frac",0:25, sep = "_"))
 mean_clean_Ctrl_df = mean_clean_Ctrl_df[,-1]
 ```
 
-Comparison test between RNAse and Ctrl
 
-running students t or other comparative stat test on ctrl vs RNAse data to see if significant difference
+Comparison tests between RNAse and Ctrl
+
+check normality 
+wilcox.test() if not normal
+t.test(before, after, paired = TRUE) if normal
 ```{r}
 
 
@@ -198,7 +201,8 @@ running students t or other comparative stat test on ctrl vs RNAse data to see i
 ```
 
 
-focusing t test on changes in fractions 19-25 
+focusing stat test on changes in fractions 19-25
+check norm then decide test 
 ```{r}
 
 
