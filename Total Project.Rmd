@@ -7,13 +7,17 @@ output: html_document
 Loading Data and Packages
 
 ```{r}
-library(ggplot2)
-library(tidyverse)
-library(dplyr)
-library()
+library("ggplot2")
+library("tidyverse")
+library("dplyr")
+library("DDoutlier")
+library("dbscan")
 
 #loading data into Raw_Data dataframe
 Raw_Data<- read.table("c://Data_Analysis//RDeeP_A549_NS.csv", header=TRUE, row.names=1, sep = ";")
+
+#Creating a copy of Raw_Data so we have to touch it as little as possible
+Data_copy = Raw_Data
 ```
 
 ```{r}
