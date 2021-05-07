@@ -29,6 +29,7 @@ min_max_mean_func <- function(x){
 }
 ```
 
+ignore
 ```{r}
 '
 #RNAse Factor df         
@@ -50,6 +51,7 @@ colnames(RNAse_frac_df) = c(paste("frac",0:25, sep = "_"))
 RNAse_frac_df = RNAse_frac_df[,-1] #this code deletes the unnessecary first null colum
 ```
 
+ignore
 ```{r}
 '
 #Control Factor df
