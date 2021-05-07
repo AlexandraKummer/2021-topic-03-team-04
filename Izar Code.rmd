@@ -69,7 +69,7 @@ ctrl_frac_df = ctrl_frac_df[,-1] #this code deletes the unnessecary first null c
 
 Normalizing Protein data x/ntot   ##results in Norm_Data_df
 ```{r}
-
+#generates 
 T_P_S_df <- data.frame(Total_Protein_Sum)
 T_P_S_vec <-c(T_P_S_df[1,],T_P_S_df[4,],T_P_S_df[2,],T_P_S_df[5,],T_P_S_df[3,],T_P_S_df[6,])
 T_P_S_vec_div_func <- function(x){
@@ -95,10 +95,14 @@ Now applying statistical
 DIXON test, LOF test with DMwR::lofactor function or selfmade test
 either want output df without outliers, or a outlier TRUE / FALSE matrix or a 0/1 matrix in same dim as norm dfs to get norm dfs without outliers
 
+
+Maybe try using harmonic mean so we dont need to remove outliers --- was nice but sucks with low outliers
+
 Trying to apply LOF/lof   ##results in NoOut_norm_RNAse_df & NoOut_norm_Ctrl_df
 ```{r}
 library(DDoutlier)
 library(dbscan)
+library(psych)
 
 LOF_func <-function(x){ #creating function usable in apply
   lof(x,2)
@@ -112,7 +116,7 @@ Error in if (k >= n || k < 1) { : missing value where TRUE/FALSE needed'
 
 #creating empty dataframe to store results
 NoOut_norm_RNAse_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
-'need to figure out how to save the results back into a 3680x150 df
+'need to figure out how to save the results back into a 3680x75 df
  want to compare 3 values then make 3 colums and 3680 rows out of the resulting LOF vector
  then add them together to get a resulting df where the LOF factors coincide with the vaules
 that the fractions have.
@@ -186,6 +190,66 @@ while (n < 75){
 }
 colnames(mean_clean_Ctrl_df) = c(paste("Ctrl","frac",0:25, sep = "_"))
 mean_clean_Ctrl_df = mean_clean_Ctrl_df[,-1]
+```
+
+Creating df with median method ##results in 3680 RNAse_median_df & Ctrl_median_df
+
+Wird angenommen, dass der Median eine gute Methode für n=3 stichproben ist, die robust gegenüber OUtlieren ist."https://wis.kuleuven.be/statdatascience/robust/papers/2002/rousseeuwverboven-robustestimationinverysmallsampl.pdf"
+
+```{r}
+RNAse_median_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+n <-1
+while (n < 75){
+    temp_df <- data.frame(norm_RNAse[,n],norm_RNAse[,n+1],norm_RNAse[,n+2])
+    Output_df <-data.frame(apply(temp_df,1,median))
+    RNAse_median_df<- cbind(RNAse_median_df,Output_df)
+    n <- n + 3
+}
+colnames(RNAse_median_df) = c(paste("frac",0:25, sep = "_"))
+RNAse_median_df = RNAse_median_df[,-1]
+
+
+
+Ctrl_median_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+n <-1
+while (n < 75){
+    temp_df <- data.frame(norm_Ctrl[,n],norm_Ctrl[,n+1],norm_Ctrl[,n+2])
+    Output_df <-data.frame(apply(temp_df,1,median))
+    Ctrl_median_df<- cbind(Ctrl_median_df,Output_df)
+    n <- n + 3
+}
+colnames(Ctrl_median_df) = c(paste("frac",0:25, sep = "_"))
+Ctrl_median_df = Ctrl_median_df[,-1]
+
+
+
+```
+
+now by arithmetic mean ##results in RNAse_mean_df & Ctrl_mean_df
+```{r}
+RNAse_mean_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+n <-1
+while (n < 75){
+    temp_df <- data.frame(norm_RNAse[,n],norm_RNAse[,n+1],norm_RNAse[,n+2])
+    Output_df <-data.frame(apply(temp_df,1,mean))
+    RNAse_mean_df<- cbind(RNAse_mean_df,Output_df)
+    n <- n + 3
+}
+colnames(RNAse_mean_df) = c(paste("frac",0:25, sep = "_"))
+RNAse_mean_df = RNAse_mean_df[,-1]
+
+
+
+Ctrl_mean_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+n <-1
+while (n < 75){
+    temp_df <- data.frame(norm_Ctrl[,n],norm_Ctrl[,n+1],norm_Ctrl[,n+2])
+    Output_df <-data.frame(apply(temp_df,1,mean))
+    Ctrl_mean_df<- cbind(Ctrl_mean_df,Output_df)
+    n <- n + 3
+}
+colnames(Ctrl_mean_df) = c(paste("frac",0:25, sep = "_"))
+Ctrl_mean_df = Ctrl_mean_df[,-1]
 ```
 
 
