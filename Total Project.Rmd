@@ -4,9 +4,16 @@ author: "Izar, Lukas, Alex, Celina"
 date: "1 5 2021"
 output: html_document
 ---
+Loading Data and Packages
 
 ```{r}
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library()
 
+#loading data into Raw_Data dataframe
+Raw_Data<- read.table("c://Data_Analysis//RDeeP_A549_NS.csv", header=TRUE, row.names=1, sep = ";")
 ```
 
 ```{r}
