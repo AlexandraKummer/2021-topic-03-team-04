@@ -165,6 +165,7 @@ for (i in 1:dim(RNAse_Matrix)[1]) {
   s = paste(rownames(Data_copy)[k],"Rep",k_counter,sep="_")
   rownames(RNAse_Data)[i] = s
 }
+Fraction_names = colnames(RNAse_Data)
 RNAse_Data
 Ctrl_Data
 Data_copy
@@ -339,5 +340,24 @@ ggplot(Total_Prot_norm_Rotated_df, aes(x=1:25))+
   xlab("Fractions")+
   ylab("Normalized Protein Amount")+
   scale_x_continuous(breaks=1:25)
+```
+Es werden vier dataframes erstellt:
+1. Ctrl_Clean_Median 
+2. RNAse_Clean_Median
+3. Ctrl_Clean_Mean
+4. RNAse_Clean_Mean
+
+Alle 4 mit den dimensionen (3680x25). 1 und 2 enthalten den median aller 3 Repititions und 3 und 4 den Mean.
+
+Auf grundlage des Papers:
+[https://wis.kuleuven.be/statdatascience/robust/papers/2002/rousseeuwverboven-robustestimationinverysmallsampl.pdf]
+
+Wird angenommen, dass der Median eine gute Methode für n=3 stichproben ist, die robust gegenüber OUtlieren ist.
+
+```{r}
+
+library(DDoutlier)
+library(dbscan)
+
 ```
 
