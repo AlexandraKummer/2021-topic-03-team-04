@@ -69,6 +69,7 @@ ctrl_frac_df = ctrl_frac_df[,-1] #this code deletes the unnessecary first null c
 ```
 
 
+
 Normalizing Protein data x/ntot   ##results in Norm_Data_df
 ```{r}
 #generates 
@@ -257,10 +258,15 @@ Ctrl_mean_df = Ctrl_mean_df[,-1]
 
 Comparison tests between RNAse and Ctrl
 
-check normality 
+check normality with rstatix::shapiro_test()
 wilcox.test() if not normal
 t.test(before, after, paired = TRUE) if normal
 ```{r}
+library(rstatix)
+library(stats)
+
+
+  wilcox.test(RNAse_median_df,Ctrl_median_df,two.sided,)
 
 
 
