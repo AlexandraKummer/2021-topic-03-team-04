@@ -12,6 +12,7 @@ library("tidyverse")
 library("dplyr")
 library("DDoutlier")
 library("dbscan")
+library(rstatix)
 
 #loading data into Raw_Data dataframe
 Raw_Data<- read.table("c://Data_Analysis//RDeeP_A549_NS.csv", header=TRUE, row.names=1, sep = ";")
