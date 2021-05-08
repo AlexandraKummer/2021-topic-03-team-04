@@ -6,15 +6,22 @@ output: html_document
 ---
 
 ```{r}
+library("ggplot2")
+library("tidyverse")
+
+help(ggplot2)
+  
 Total_Prot_Rotated <- t(Total_Protein_Data)
 Total_Prot_Rotated_df <- data.frame(Total_Prot_Rotated)
+
 ggplot(Total_Prot_Rotated_df, aes(x=1:25))+
-  geom_line(aes(y=Total_Prot_Rotated_df[,1]),colour="blue")+
-  geom_line(aes(y=Total_Prot_Rotated_df[,2]), colour="red")+
-  geom_line(aes(y=Total_Prot_Rotated_df[,3]), colour = "green")+
-  ggtitle("Protein amounts of control repetition in every Fraction")+
-  xlab("Fractions")+
-  ylab("Total Protein Amount")+
+  geom_line(aes(y=Total_Prot_Rotated_df[,1]),colour="blue", label="Ctrl_Rep_1")+
+  geom_line(aes(y=Total_Prot_Rotated_df[,2]), colour="red", label="Ctrl_Rep_2")+
+  geom_line(aes(y=Total_Prot_Rotated_df[,3]), colour = "darkgreen", label = "Ctrl_Rep_3")+
+  ggtitle("Total protein amount of control repetition in every fraction")+
+  xlab("Fraction")+
+  ylab("Protein Amount")+
+  theme(legend.position = "right")+
   scale_x_continuous(breaks=1:25)
 ```
 
@@ -22,11 +29,11 @@ ggplot(Total_Prot_Rotated_df, aes(x=1:25))+
 ggplot(Total_Prot_Rotated_df, aes(x=1:25))+
   geom_line(aes(y=Total_Prot_Rotated_df[,4]),colour="blue")+
   geom_line(aes(y=Total_Prot_Rotated_df[,5]), colour="red")+
-  geom_line(aes(y=Total_Prot_Rotated_df[,6]), colour = "green")+
+  geom_line(aes(y=Total_Prot_Rotated_df[,6]), colour = "darkgreen")+
   scale_x_continuous(breaks=1:25)+
-  ggtitle("Protein amounts of RNAse repetitions in every Fraction")+
-  ylab("Total amount of Protein")+
-  xlab("Fractions")
+  ggtitle("Total protein amount of RNAse repetitions in every fraction")+
+  ylab("Protein amount")+
+  xlab("Fraction")
 ```
 
 ```{r}
@@ -37,7 +44,13 @@ ggplot(Total_Prot_Rotated_mean_df, aes(x=1:25))+
   geom_line(aes(y=Total_Prot_Rotated_mean_df[,7]), color = "blue")+
   geom_line(aes(y=Total_Prot_Rotated_mean_df[,8]), color = "red")+
   ggtitle("Comparison of total protein amount of control and RNAse")+
-  xlab("Fractions")+
-  ylab("Total Protein Amount")+
+  xlab("Fraction")+
+  ylab("Protein amount")+
   scale_x_continuous(breaks = 1:25)
+```
+
+
+```{r}
+barplot(Total_Protein_Sum, ylab = "Protein amount", las = 2, cex.axis=0.5, cex.names=0.8, main = "Total Protein amount of repetitions")
+Total_Protein_Sum
 ```
