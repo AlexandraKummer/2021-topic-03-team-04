@@ -28,7 +28,6 @@ min_max_mean_func <- function(x){
   (max(x)-min(x))/mean(x)
 }
 ```
-
 ignore
 ```{r}
 '
@@ -50,7 +49,6 @@ colnames(RNAse_frac_df) = c(paste("frac",0:25, sep = "_"))
 
 RNAse_frac_df = RNAse_frac_df[,-1] #this code deletes the unnessecary first null colum
 ```
-
 ignore
 ```{r}
 '
@@ -94,12 +92,6 @@ Ctrl_select_vec <- seq(from =1, to = 150, by = 2)
 norm_Ctrl <- data.frame(Norm_Data_df[,Ctrl_select_vec])
 ```
 
-Now applying statistical
-DIXON test, LOF test with DMwR::lofactor function or selfmade test
-either want output df without outliers, or a outlier TRUE / FALSE matrix or a 0/1 matrix in same dim as norm dfs to get norm dfs without outliers
-
-
-Maybe try using harmonic mean so we dont need to remove outliers --- was nice but sucks with low outliers
 
 Trying to apply LOF/lof   ##results in NoOut_norm_RNAse_df & NoOut_norm_Ctrl_df
 ```{r}
@@ -107,9 +99,7 @@ library(DDoutlier)
 library(dbscan)
 library(psych)
 
-LOF_func <-function(x){ #creating function usable in apply
-  lof(x,2)
-}
+
 
 #issues with applying DDoutlier::LOF and dbscan::lof 
 ' data.frame(apply(data.frame(norm_RNAse[,1],norm_RNAse[,2],norm_RNAse[,3]),1,lof))
@@ -119,10 +109,7 @@ Error in if (k >= n || k < 1) { : missing value where TRUE/FALSE needed'
 
 #creating empty dataframe to store results
 NoOut_norm_RNAse_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
-'need to figure out how to save the results back into a 3680x75 df
- want to compare 3 values then make 3 colums and 3680 rows out of the resulting LOF vector
- then add them together to get a resulting df where the LOF factors coincide with the vaules
-that the fractions have.
+'
 step 1 seperate the Raw Data into RNAse and Ctrl each with 3680x75 now we have rep 1,2,3 next to each other
 step 2 apply(temp_vec,1,LOF_func) to a temp vec consisting of rep n,n+1,n+2
 step 3 save into empty df'
@@ -134,7 +121,42 @@ while (n < 75){
     n <- n + 3
 }
 NoOut_norm_RNAse_df = NoOut_norm_RNAse_df[,-1]
-colnames(NoOut_norm_RNAse_df) = c(colnames(norm_RNAse))# finish naming later
+colnames(NoOut_norm_RNAse_df) = c(colnames(norm_RNAse))
+
+
+
+#different approach
+
+lof_apply_func <- function(x){
+  
+  Output_df <- data.frame(matrix(nrow = nrow(x), ncol=0),row.names = row.names(x))
+        n <-1
+        while (n < 75){
+        temp_df <- data.frame(x[,n],x[,n+1],x[,n+2])
+          
+          for(i in length(row.names(x))){ 
+            u <- t(data.frame(temp_df[i,]))
+            temp_vec <- LOF(u,2)
+            temp_Output_df <- rbind(t(data.frame(temp_vec)))
+          }
+   
+        Output_df <- cbind(Output_df,temp_Output_df)
+         n <- n + 3
+        }
+}
+
+
+'Manual run for error finding'
+
+
+temp_df <- data.frame(norm_RNAse[,1],norm_RNAse[,2],norm_RNAse[,3])
+u <- t(data.frame(temp_df[1,]))
+            temp_vec <- c(LOF(u,2)) 
+            temp_Output_df <- rbind(t(data.frame(temp_vec)))
+
+
+
+
 
 
 ```
