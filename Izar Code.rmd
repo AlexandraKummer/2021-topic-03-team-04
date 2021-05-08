@@ -256,17 +256,40 @@ Ctrl_mean_df = Ctrl_mean_df[,-1]
 ```
 
 
-Comparison tests between RNAse and Ctrl
-
-check normality with rstatix::shapiro_test()
-wilcox.test() if not normal
-t.test(before, after, paired = TRUE) if normal
+Wilcox Comparison tests between RNAse and Ctrl ##results in wilcox_pval_df
 ```{r}
 library(rstatix)
 library(stats)
+'NONE OF THIS WORKS the output of the wilcox function is a list, we need to access the "statistic value" or the "p.value"'
 
+#creating function to use with our cleaned data for applying wilcox
+wilcox_apply_func <-function(x,y){
+    output_vec <- vector()
+    i <-1
+    while(i <= nrow(x)) {
+    #taking rows and making them into vectors usable by the wicoxsonfunc
+    u <-x[i,]
+    v <-y[i,]
+    
+    #applyig wilcox to each set of paired control and RNASe vectors
+    wilcox_val <- wilcox.test(u,v, 
+                              alternative = "two.sided",
+                              mu = 0,
+                              paired = FALSE,
+                              conf.level = 0.95)
+    #generating an output vector to store the outputs 
+    append(output_vec, wilcox_val$p.value, after = length(output_vec))   #the $p.value should access the list
+    i <-i+1
+    }
+    #saving the output vector as a dataframe with  dim 3680x1 from output_vec
+    wilcox_scores_df <-data.frame(output_vec, row.names = row.names(x))
+    colnames(wilcox_scores_df) <- c("Wilcox_score")
+    
+}
 
-  wilcox.test(RNAse_median_df,Ctrl_median_df,two.sided,)
+median_wilcox <- wilcox_apply_func(RNAse_median_df,Ctrl_median_df)
+
+mean_wilcox <- wilcox_apply_func(RNAse_mean_df,Ctrl_mean_df)
 
 
 
@@ -274,7 +297,6 @@ library(stats)
 
 
 focusing stat test on changes in fractions 19-25
-check norm then decide test 
 ```{r}
 
 
