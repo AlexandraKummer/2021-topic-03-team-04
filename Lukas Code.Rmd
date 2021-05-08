@@ -11,6 +11,8 @@ Raw_Data<- read.table("c://Data_Analysis//RDeeP_A549_NS.csv", header=TRUE, row.n
 library("tidyverse")
 library("dplyr")
 library("ggplot2")
+library("DDoutlier")
+library("dbscan")
 
 Data_copy = Raw_Data
 
@@ -165,6 +167,7 @@ for (i in 1:dim(RNAse_Matrix)[1]) {
   s = paste(rownames(Data_copy)[k],"Rep",k_counter,sep="_")
   rownames(RNAse_Data)[i] = s
 }
+Fraction_names = colnames(RNAse_Data)
 RNAse_Data
 Ctrl_Data
 Data_copy
@@ -253,13 +256,6 @@ barplot(barplot_vector)
 }
 
 ```
-Comparision of Ctrl group and RNAse um unterschiede zu finden, wo im RNAse dataset mehr als 1000 protein wo im Ctrl dataset mehr als 1000 protein, und dann vergleich ob dies an den selben stellen der fall ist.
-```{r}
-logic_ctrl <- Ctrl_Data > 1000
-logic_RNAse <- RNAse_Data > 1000
-logic_compare <- logic_ctrl == logic_RNAse
-View(logic_compare)
-```
 
 ```{r}
 Total_Protein_Sum = rowSums(Total_Protein_Data) # Calculate the Total amount of all protein in one repetition
@@ -339,5 +335,63 @@ ggplot(Total_Prot_norm_Rotated_df, aes(x=1:25))+
   xlab("Fractions")+
   ylab("Normalized Protein Amount")+
   scale_x_continuous(breaks=1:25)
+```
+ 
+ #Plotting some graphs to compare mean and median
+
+```{r}
+ggplot(data.frame(t(RNAse_median_df)), aes(x=1:25))+
+  geom_line(aes(y=data.frame(t(RNAse_median_df))[,4]),colour="blue")+
+  geom_line(aes(y=data.frame(t(RNAse_mean_df))[,4]), colour="red")+
+  ggtitle("Comparizon Mean(red) and Median(blue) for RNAse sample Protein RS9")+
+  xlab("Fractions")+
+  ylab("Normalized Protein Amount")+
+  scale_x_continuous(breaks=1:25)
+
+ggplot(data.frame(t(RNAse_median_df)), aes(x=1:25))+
+  geom_line(aes(y=data.frame(t(RNAse_median_df))[,105]),colour="blue")+
+  geom_line(aes(y=data.frame(t(RNAse_mean_df))[,105]), colour="red")+
+  ggtitle("Comparizon Mean(red) and Median(blue) for RNAse sample Protein SCLY")+
+  xlab("Fractions")+
+  ylab("Normalized Protein Amount")+
+  scale_x_continuous(breaks=1:25)
+
+ggplot(data.frame(t(RNAse_median_df)), aes(x=1:25))+
+  geom_line(aes(y=data.frame(t(RNAse_median_df))[,510]),colour="blue")+
+  geom_line(aes(y=data.frame(t(RNAse_mean_df))[,510]), colour="red")+
+  ggtitle("Comparizon Mean(red) and Median(blue) for RNAse sample Protein TRI59")+
+  xlab("Fractions")+
+  ylab("Normalized Protein Amount")+
+  scale_x_continuous(breaks=1:25)
+
+# Ctrl
+ggplot(data.frame(t(Ctrl_median_df)), aes(x=1:25))+
+  geom_line(aes(y=data.frame(t(Ctrl_median_df))[,4]),colour="blue")+
+  geom_line(aes(y=data.frame(t(Ctrl_mean_df))[,4]), colour="red")+
+  ggtitle("Comparizon Mean(red) and Median(blue) for Ctrl sample Protein RS9")+
+  xlab("Fractions")+
+  ylab("Normalized Protein Amount")+
+  scale_x_continuous(breaks=1:25)
+
+ggplot(data.frame(t(Ctrl_median_df)), aes(x=1:25))+
+  geom_line(aes(y=data.frame(t(Ctrl_median_df))[,105]),colour="blue")+
+  geom_line(aes(y=data.frame(t(Ctrl_mean_df))[,105]), colour="red")+
+  ggtitle("Comparizon Mean(red) and Median(blue) for Ctrl sample Protein SCLY")+
+  xlab("Fractions")+
+  ylab("Normalized Protein Amount")+
+  scale_x_continuous(breaks=1:25)
+
+ggplot(data.frame(t(Ctrl_median_df)), aes(x=1:25))+
+  geom_line(aes(y=data.frame(t(Ctrl_median_df))[,510]),colour="blue")+
+  geom_line(aes(y=data.frame(t(Ctrl_mean_df))[,510]), colour="red")+
+  ggtitle("Comparizon Mean(red) and Median(blue) for Ctrl sample Protein TRI59")+
+  xlab("Fractions")+
+  ylab("Normalized Protein Amount")+
+  scale_x_continuous(breaks=1:25)
+
+
+rownames(Data_copy[4,])
+rownames(Data_copy[105,])
+rownames(Data_copy[510,])
 ```
 

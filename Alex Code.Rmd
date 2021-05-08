@@ -4,7 +4,14 @@ author: "Alex"
 date: "1 5 2021"
 output: html_document
 ---
+Loading packages
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+```
 
+Creating plot: total protein in control vs fraction, rep1= blue, rep2= red, rep3= blue
 ```{r}
 library("ggplot2")
 library("tidyverse")
@@ -23,6 +30,8 @@ ggplot(Total_Prot_Rotated_df, aes(x=1:25))+
   scale_x_continuous(breaks=1:25)
 ```
 
+Creating plot: total protein in RNAse vs fraction, rep1= blue, rep2= red, rep3= blue
+
 ```{r}
 ggplot(Total_Prot_Rotated_df, aes(x=1:25))+
   geom_line(aes(y=Total_Prot_Rotated_df[,4]),colour="blue")+
@@ -33,6 +42,7 @@ ggplot(Total_Prot_Rotated_df, aes(x=1:25))+
   ylab("Protein amount")+
   xlab("Fraction")
 ```
+Creating plot: total mean protein in RNAse & Ctrl vs fraction, RNAse = red, Ctrl = blue
 
 ```{r}
 Total_Prot_Rotated_mean_df <- Total_Prot_Rotated_df %>%
