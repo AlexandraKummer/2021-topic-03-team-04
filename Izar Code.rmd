@@ -100,8 +100,6 @@ library(DDoutlier)
 library(dbscan)
 library(psych)
 
-
-
 #issues with applying DDoutlier::LOF and dbscan::lof 
 ' data.frame(apply(data.frame(norm_RNAse[,1],norm_RNAse[,2],norm_RNAse[,3]),1,lof))
 Error in FUN(newX[, i], ...) : x needs to be a matrix or a dist object!
@@ -116,7 +114,8 @@ step 2 apply(temp_vec,1,LOF_func) to a temp vec consisting of rep n,n+1,n+2
 step 3 save into empty df
 '
 LOF_func <-function(x){ #creating function usable in apply
-return(lof(x,2))}
+x <- t(as.data.frame(x))
+  return(lof(x,2))}
 n <-1
 
 while (n < 75){
@@ -127,11 +126,6 @@ while (n < 75){
 }
 NoOut_norm_RNAse_df = NoOut_norm_RNAse_df[,-1]
 colnames(NoOut_norm_RNAse_df) = c(colnames(norm_RNAse))
-
-
-
-
-
 
 
 #different approach
@@ -159,7 +153,8 @@ lof_apply_func <- function(x){
 'Manual run for error finding'
 
 
-temp_df <- data.frame(norm_RNAse[,1],norm_RNAse[,2],norm_RNAse[,3])
+temp_df <- data.frame(norm_RNAse[,4],norm_RNAse[,5],norm_RNAse[,6
+    ])
 u <- t(data.frame(temp_df[1,]))
             temp_vec <- c(LOF(u,2)) 
             temp_Output_df <- rbind(t(data.frame(temp_vec)))
