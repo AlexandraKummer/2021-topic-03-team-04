@@ -30,40 +30,40 @@ min_max_mean_func <- function(x){
 ```
 ignore
 ```{r}
-'
+
 #RNAse Factor df         
-RNAse_frac_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data)) #creating a dataframe to save results too
+#RNAse_frac_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data)) #creating a dataframe to save results too
 
-n <-2 # for RNAse n = 2 for ctrl n =1 corresponding to position in dataframe
-while (n < 150){ # this will iterate trough all the fractions
+#n <-2 # for RNAse n = 2 for ctrl n =1 corresponding to position in dataframe
+#while (n < 150){ # this will iterate trough all the fractions
 
-    temp_df <- data.frame(Raw_Data[,n],Raw_Data[,n+2],Raw_Data[,n+4])  # a temporary df for sotring the 3 reps of each fraction
+ #   temp_df <- data.frame(Raw_Data[,n],Raw_Data[,n+2],Raw_Data[,n+4])  # a temporary df for sotring the 3 reps of each fraction
     
-    Output_df <-data.frame(apply(temp_df,1,min_max_mean_func))     #the function for comparing (max-min)/mean is applied across the rows apply(...,1,..) for rows 2 for cols
+  #  Output_df <-data.frame(apply(temp_df,1,min_max_mean_func))     #the function for comparing (max-min)/mean is applied across the rows apply(...,1,..) for rows 2 for cols
     
-    RNAse_frac_df <- cbind(RNAse_frac_df,Output_df)           #each run through adds a colum to RNAse_frac_df, we end with 26 cols
+   # RNAse_frac_df <- cbind(RNAse_frac_df,Output_df)           #each run through adds a colum to RNAse_frac_df, we end with 26 cols
     
-    n <- n + 6     # the counter is increased to select the next fraction
-}
-colnames(RNAse_frac_df) = c(paste("frac",0:25, sep = "_"))
+  #  n <- n + 6     # the counter is increased to select the next fraction
+#}
+#colnames(RNAse_frac_df) = c(paste("frac",0:25, sep = "_"))
 
-RNAse_frac_df = RNAse_frac_df[,-1] #this code deletes the unnessecary first null colum
+#RNAse_frac_df = RNAse_frac_df[,-1] #this code deletes the unnessecary first null colum
 ```
 ignore
 ```{r}
-'
+#
 #Control Factor df
-ctrl_frac_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
-n <-1
-while (n < 150){
-    temp_df <- data.frame(Raw_Data[,n],Raw_Data[,n+2],Raw_Data[,n+4]) 
-    Output_df <-data.frame(apply(temp_df,1,min_max_mean_func))
-    ctrl_frac_df <- cbind(ctrl_frac_df,Output_df)
-    n <- n + 6
-}
-colnames(ctrl_frac_df) = c(paste("frac",0:25, sep = "_"))
+#ctrl_frac_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+#n <-1
+#while (n < 150){
+#    temp_df <- data.frame(Raw_Data[,n],Raw_Data[,n+2],Raw_Data[,n+4]) 
+#    Output_df <-data.frame(apply(temp_df,1,min_max_mean_func))
+#    ctrl_frac_df <- cbind(ctrl_frac_df,Output_df)
+#    n <- n + 6
+#}
+#colnames(ctrl_frac_df) = c(paste("frac",0:25, sep = "_"))
 
-ctrl_frac_df = ctrl_frac_df[,-1] #this code deletes the unnessecary first null colum
+#ctrl_frac_df = ctrl_frac_df[,-1] #this code deletes the unnessecary first null colum
 ```
 
 
@@ -93,6 +93,7 @@ norm_Ctrl <- data.frame(Norm_Data_df[,Ctrl_select_vec])
 ```
 
 
+*(work in progress)
 Trying to apply LOF/lof   ##results in NoOut_norm_RNAse_df & NoOut_norm_Ctrl_df
 ```{r}
 library(DDoutlier)
@@ -112,16 +113,24 @@ NoOut_norm_RNAse_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.na
 '
 step 1 seperate the Raw Data into RNAse and Ctrl each with 3680x75 now we have rep 1,2,3 next to each other
 step 2 apply(temp_vec,1,LOF_func) to a temp vec consisting of rep n,n+1,n+2
-step 3 save into empty df'
+step 3 save into empty df
+'
+LOF_func <-function(x){ #creating function usable in apply
+return(lof(x,2))}
 n <-1
+
 while (n < 75){
-    temp_df <- data.frame(norm_RNAse[,n],norm_RNAse[,n+1],norm_RNAse[,n+2])
-    Output_df <-data.frame(apply(temp_df,1,LOF_func))
+    temp_df <- as.matrix(norm_RNAse[,n],norm_RNAse[,n+1],norm_RNAse[,n+2])
+    Output_df <-t(data.frame(apply(temp_df,1,LOF_func)))
     NoOut_norm_RNAse_df <- cbind(NoOut_norm_RNAse_df,Output_df)
     n <- n + 3
 }
 NoOut_norm_RNAse_df = NoOut_norm_RNAse_df[,-1]
 colnames(NoOut_norm_RNAse_df) = c(colnames(norm_RNAse))
+
+
+
+
 
 
 
@@ -136,13 +145,14 @@ lof_apply_func <- function(x){
           
           for(i in length(row.names(x))){ 
             u <- t(data.frame(temp_df[i,]))
-            temp_vec <- LOF(u,2)
+            temp_vec <- as.vector(LOF(u,2))
             temp_Output_df <- rbind(t(data.frame(temp_vec)))
           }
    
         Output_df <- cbind(Output_df,temp_Output_df)
          n <- n + 3
         }
+        return(Output_df)
 }
 
 
@@ -153,15 +163,30 @@ temp_df <- data.frame(norm_RNAse[,1],norm_RNAse[,2],norm_RNAse[,3])
 u <- t(data.frame(temp_df[1,]))
             temp_vec <- c(LOF(u,2)) 
             temp_Output_df <- rbind(t(data.frame(temp_vec)))
+            
+            
+            
 
-
-
+# this works ??? all i did was replace all the x with norm_RNAse shouldnt the function do the same thing ?
+  lof_RNAse <- data.frame(matrix(nrow = nrow(norm_RNAse), ncol=0),row.names = row.names(norm_RNAse))
+        n <-1
+        while (n < 75){
+        temp_df <- data.frame(norm_RNAse[,n],norm_RNAse[,n+1],norm_RNAse[,n+2])
+          
+          for(i in length(row.names(norm_RNAse))){ 
+            u <- t(data.frame(temp_df[i,]))
+            temp_vec <- as.vector(LOF(u,2))
+            temp_Output_df <- rbind(t(data.frame(temp_vec)))
+          }
+   
+        lof_RNAse<- cbind(lof_RNAse,temp_Output_df)
+         n <- n + 3
+        }
 
 
 
 ```
-
-
+*not yet necessary bc lof does not work yet
 Removing Values based on if Outlier or not ##results in clean_RNAse_df & clean_Ctrl_df'
 ```{r}
 #modifying the LO factor df  to remove any value above  (arbitrary) 1.5, setting all values < 1.5 = 1 and all values >1.5 = 0
@@ -187,8 +212,7 @@ clean_Ctrl_df[clean_Ctrl_df == 0] <- NA
 
 
 ```
-
-
+*not yet necessary bc lof does not work yet 
 mean of RNAse and Ctrl reps  ## results in clean_mean_RNAse_df & clean_mean_Ctrl_df
 ```{r}
 # creating mean_clean_RNAse_df 3860x25, normalized and cleaned of outlieres
@@ -217,10 +241,11 @@ colnames(mean_clean_Ctrl_df) = c(paste("Ctrl","frac",0:25, sep = "_"))
 mean_clean_Ctrl_df = mean_clean_Ctrl_df[,-1]
 ```
 
+
+
+*works
 Creating df with median method ##results in 3680 RNAse_median_df & Ctrl_median_df
-
 Wird angenommen, dass der Median eine gute Methode für n=3 stichproben ist, die robust gegenüber OUtlieren ist."https://wis.kuleuven.be/statdatascience/robust/papers/2002/rousseeuwverboven-robustestimationinverysmallsampl.pdf"
-
 ```{r}
 RNAse_median_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
 n <-1
@@ -250,6 +275,8 @@ Ctrl_median_df = Ctrl_median_df[,-1]
 
 ```
 
+
+*works
 now by arithmetic mean ##results in RNAse_mean_df & Ctrl_mean_df
 ```{r}
 RNAse_mean_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
@@ -278,6 +305,7 @@ Ctrl_mean_df = Ctrl_mean_df[,-1]
 ```
 
 
+*(work in progresss)
 Wilcox Comparison tests between RNAse and Ctrl ##results in wilcox_pval_df
 ```{r}
 library(rstatix)
@@ -318,11 +346,9 @@ mean_wilcox <- wilcox_apply_func(RNAse_mean_df,Ctrl_mean_df)
 ```
 
 
+*(work in progress)
 focusing stat test on changes in fractions 19-25
 ```{r}
 
 
 ```
-
-
-
