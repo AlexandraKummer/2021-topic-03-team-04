@@ -114,7 +114,7 @@ step 2 apply(temp_vec,1,LOF_func) to a temp vec consisting of rep n,n+1,n+2
 step 3 save into empty df
 '
 LOF_func <-function(x){ #creating function usable in apply
-x <- t(as.data.frame(x))
+x <- as.data.frame(x)
   return(lof(x,2))}
 n <-1
 
@@ -162,22 +162,26 @@ u <- t(data.frame(temp_df[1,]))
             
             
 
-# this works ??? all i did was replace all the x with norm_RNAse shouldnt the function do the same thing ?
-  lof_RNAse <- data.frame(matrix(nrow = nrow(norm_RNAse), ncol=0),row.names = row.names(norm_RNAse))
+# doesnt work either
+            
+  lof_RNAse <- data.frame(matrix(nrow = nrow(norm_RNAse), ncol=0),row.names = row.names(norm_RNAse)) #creates df for outputdf to be added to 
         n <-1
         while (n < 75){
-        temp_df <- data.frame(norm_RNAse[,n],norm_RNAse[,n+1],norm_RNAse[,n+2])
+        temp_df <- data.frame(norm_RNAse[,n],norm_RNAse[,n+1],norm_RNAse[,n+2])# should be 3680x3 df first 3 colums to be iterated to with n 75
           
-          for(i in length(row.names(norm_RNAse))){ 
-            u <- t(data.frame(temp_df[i,]))
-            temp_vec <- as.vector(LOF(u,2))
-            temp_Output_df <- rbind(t(data.frame(temp_vec)))
+          for(i in 3680){ 
+            u <- t(data.frame(temp_df[i,])) # should make a 1x3 df  for each row (i) and feed into u 
+            temp_vec <- as.vector(lof(u,2))
+            temp_Output_df <- rbind(t(data.frame(temp_vec))) # temp_output_df should be 3680x3
           }
    
         lof_RNAse<- cbind(lof_RNAse,temp_Output_df)
          n <- n + 3
         }
 
+        
+        
+        
 
 
 ```
