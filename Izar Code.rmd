@@ -321,17 +321,49 @@ library(stats)
 wilcox_apply_func <-function(x,y){
     output_vec <- vector()
     i <-1
-    while(i <= nrow(x)) {
+    while(i <= 3680 ){
     #taking rows and making them into vectors usable by the wicoxsonfunc
-    u <-x[i,]
-    v <-y[i,]
+    u <-unname(as.vector(as.matrix(x[i,]))) 'needs to be an unnamed vector'
+    v <-unname(as.vector(as.matrix(y[i,])))
     
     #applyig wilcox to each set of paired control and RNASe vectors
-    wilcox_val <- wilcox.test(u,v, 
-                              alternative = "two.sided",
-                              mu = 0,
-                              paired = FALSE,
-                              conf.level = 0.95)
+    wilcox_val <- wilcox.test(u,v, exact = FALSE) 'works till here'
+                            
+    #generating an output vector to store the outputs 
+    output_vec <- append(output_vec, wilcox_val$p.value, after = length(output_vec))   #the $p.value should access the list
+    i <-i+1
+    }
+    #saving the output vector as a dataframe with  dim 3680x1 from output_vec
+    #wilcox_scores_df <-data.frame(output_vec, row.names = row.names(x))
+    #colnames(wilcox_scores_df) <- c("Wilcox_score")
+    
+}
+
+median_wilcox <- wilcox_apply_func(RNAse_median_df,Ctrl_median_df)
+
+mean_wilcox <- wilcox_apply_func(RNAse_mean_df,Ctrl_mean_df)
+
+
+
+
+'fiddeling with the code'
+
+    output_vec <- vector()
+    i <-1
+    while(i <= 3680 ){
+    #taking rows and making them into vectors usable by the wicoxsonfunc
+    u <-unname(as.vector(as.matrix(RNAse_median_df[1,])))
+    v <-unname(as.vector(as.matrix(Ctrl_median_df[1,])))
+    
+    #applyig wilcox to each set of paired control and RNASe vectors
+    wilcox_val <- wilcox.test(u,v,exact = FALSE)
+                            # alternative = "two.sided",
+                            # mu = 0,
+                            # paired = TRUE,
+                            # exact = FALSE,
+                            # correct = FALSE,
+                            # conf.int = FALSE,
+                            # conf.level = 0.95)
     #generating an output vector to store the outputs 
     append(output_vec, wilcox_val$p.value, after = length(output_vec))   #the $p.value should access the list
     i <-i+1
@@ -341,11 +373,6 @@ wilcox_apply_func <-function(x,y){
     colnames(wilcox_scores_df) <- c("Wilcox_score")
     
 }
-
-median_wilcox <- wilcox_apply_func(RNAse_median_df,Ctrl_median_df)
-
-mean_wilcox <- wilcox_apply_func(RNAse_mean_df,Ctrl_mean_df)
-
 
 
 ```
