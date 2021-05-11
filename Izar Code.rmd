@@ -164,15 +164,21 @@ u <- t(data.frame(temp_df[1,]))
 
 # doesnt work either
             
-  lof_RNAse <- data.frame(matrix(nrow = nrow(norm_RNAse), ncol=0),row.names = row.names(norm_RNAse)) #creates df for outputdf to be added to 
+  lof_RNAse <- data.frame(matrix(nrow = 3680, ncol=0,row.names = row.names(norm_RNAse))) #creates df for outputdf to be added to 
         n <-1
         while (n < 75){
+          
         temp_df <- data.frame(norm_RNAse[,n],norm_RNAse[,n+1],norm_RNAse[,n+2])# should be 3680x3 df first 3 colums to be iterated to with n 75
           
+        temp_Output_df <- data.frame(matrix(nrow = nrow(0)),ncol(3)) #maybe creating the df before solves something ?
           for(i in 3680){ 
-            u <- t(data.frame(temp_df[i,])) # should make a 1x3 df  for each row (i) and feed into u 
-            temp_vec <- as.vector(lof(u,2))
-            temp_Output_df <- rbind(t(data.frame(temp_vec))) # temp_output_df should be 3680x3
+           
+            u <- t(data.frame(temp_df[i,])) # should make a 1x3 df  for each row (i) in temp_df and feed into u 
+            
+            temp_vec <- as.vector(lof(u,2)) #should make length 3
+            
+            
+            temp_Output_df <- rbind(temp_Output_df,t(data.frame(temp_vec))) # temp_output_df should be 3680x3 from r bind the two dfs
           }
    
         lof_RNAse<- cbind(lof_RNAse,temp_Output_df)
