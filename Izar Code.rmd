@@ -111,6 +111,11 @@ x <- as.data.frame(x)
   return(lof(x,2))}
 n <-1
 
+LOF_func(as.data.frame(c(1,2,10)))
+
+
+
+
 while (n < 75){
     temp_df <- as.matrix(norm_RNAse[,n],norm_RNAse[,n+1],norm_RNAse[,n+2])
     Output_df <-t(data.frame(apply(temp_df,1,LOF_func)))
@@ -200,7 +205,7 @@ exp_lof_func <- function(x){
     m <- 1
   for (i in nrow(temp_df)) {
     
-    i <- LOF(i,3)
+    i <- lof(,2)
   } 
   Output_df[,n:n+2] <-temp_df[,1:3]
   i <-i+1
@@ -218,7 +223,7 @@ Removing Values based on if Outlier or not ##results in clean_RNAse_df & clean_C
 data_clean_func <- function(x,z,treshhold){ # x = data to clean # z = LOF output df RNASe or Ctrl #threshhold can be played around with for signifacance of data
   treshhold_clean_func <- function(y){
     if (y >= treshhold){
-      y <- 0
+      y <- NA
     }else{
       y <- 1
     }
@@ -229,6 +234,8 @@ data_clean_func <- function(x,z,treshhold){ # x = data to clean # z = LOF output
   x*binary_removal_df
   
 }
+
+
 # i realized we might want to set 0 to NA before doing data cleaning think about it later
 clean_RNAse_df <- data_clean_func(norm_RNAse,LOF_RNAse,1.5)
 clean_RNAse_df[clean_RNAse_df == 0] <- NA
