@@ -519,5 +519,9 @@ max_bin_func(exp_maxima_vec,5)
  so if n is a maximum, we check [n-m:n+m] and see if its = to the global max of the area, issues with two identical maxima....
 '
 # just noting that exp_maxima_vec[1:3]<-c(11:13) works for the replacing of values so value replacement works easily
+
+
+
+'another idea is to select only the maxima then just work on that vector set a fraction distance which they can be appart and if theyre to far appart dont compare essentially work with both the location vector as well as the maxima value vector'
 ```
 
