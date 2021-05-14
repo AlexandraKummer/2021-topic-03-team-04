@@ -13,6 +13,7 @@ library("dplyr")
 library("ggplot2")
 library("DDoutlier")
 library("dbscan")
+library("psych")
 
 Data_copy = Raw_Data
 
@@ -393,5 +394,31 @@ ggplot(data.frame(t(Ctrl_median_df)), aes(x=1:25))+
 rownames(Data_copy[4,])
 rownames(Data_copy[105,])
 rownames(Data_copy[510,])
+```
+Attempt at making the Lof function work
+
+This works except in two cases:
+if two of the values are different from 0 but one is 0, the function excludes one of the non 0 values
+If two of the values are 0 and one is differnt from 0 it gives Inf for that one.
+```{r}
+RNAse_Data_lof = as.data.frame(matrix(nrow = 3*3680, ncol=25))
+rownames(RNAse_Data_lof) = rownames(RNAse_Data_norm)
+colnames(RNAse_Data_lof) = colnames(RNAse_Data_norm)
+
+i = 1
+while (i <= dim(RNAse_Data_norm)[1]) {
+  for (j in 1:dim(RNAse_Data_norm)[2]) {
+    x = as.matrix(c(RNAse_Data_norm[i,j],RNAse_Data_norm[i+1,j],RNAse_Data_norm[i+2,j]))
+    lof_temp = lof (x,2)
+    RNAse_Data_lof[i,j]=lof_temp[1]
+    RNAse_Data_lof[i+1,j]=lof_temp[2]
+    RNAse_Data_lof[i+2,j]=lof_temp[3]
+    
+  }
+  
+  i = i + 3
+}
+view(RNAse_Data_lof)
+view(RNAse_Data_norm)
 ```
 
