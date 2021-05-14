@@ -369,7 +369,8 @@ ggplot(data.frame(t(RNAse_median_df)), aes(x=1:25))+
 ggplot(data.frame(t(Ctrl_median_df)), aes(x=1:25))+
   geom_line(aes(y=data.frame(t(Ctrl_median_df))[,4]),colour="blue")+
   geom_line(aes(y=data.frame(t(Ctrl_mean_df))[,4]), colour="red")+
-  ggtitle("Comparizon Mean(red) and Median(blue) for Ctrl sample Protein RS9")+
+  geom_line(aes(y=data.frame(t(Ctrl_lof_df))[,4]), colour="green")+
+  ggtitle("Comparizon Mean(red) and Median(blue) and Lof(green) for Ctrl sample Protein RS9")+
   xlab("Fractions")+
   ylab("Normalized Protein Amount")+
   scale_x_continuous(breaks=1:25)
@@ -377,7 +378,8 @@ ggplot(data.frame(t(Ctrl_median_df)), aes(x=1:25))+
 ggplot(data.frame(t(Ctrl_median_df)), aes(x=1:25))+
   geom_line(aes(y=data.frame(t(Ctrl_median_df))[,105]),colour="blue")+
   geom_line(aes(y=data.frame(t(Ctrl_mean_df))[,105]), colour="red")+
-  ggtitle("Comparizon Mean(red) and Median(blue) for Ctrl sample Protein SCLY")+
+  geom_line(aes(y=data.frame(t(Ctrl_lof_df))[,105]), colour="green")+
+  ggtitle("Comparizon Mean(red) and Median(blue) and Lof(green)for Ctrl sample Protein SCLY")+
   xlab("Fractions")+
   ylab("Normalized Protein Amount")+
   scale_x_continuous(breaks=1:25)
@@ -385,7 +387,8 @@ ggplot(data.frame(t(Ctrl_median_df)), aes(x=1:25))+
 ggplot(data.frame(t(Ctrl_median_df)), aes(x=1:25))+
   geom_line(aes(y=data.frame(t(Ctrl_median_df))[,510]),colour="blue")+
   geom_line(aes(y=data.frame(t(Ctrl_mean_df))[,510]), colour="red")+
-  ggtitle("Comparizon Mean(red) and Median(blue) for Ctrl sample Protein TRI59")+
+  geom_line(aes(y=data.frame(t(Ctrl_lof_df))[,510]), colour="green")+
+  ggtitle("Comparizon Mean(red) and Median(blue) and Lof(green) for Ctrl sample Protein TRI59")+
   xlab("Fractions")+
   ylab("Normalized Protein Amount")+
   scale_x_continuous(breaks=1:25)
@@ -400,6 +403,78 @@ Attempt at making the Lof function work
 This works except in two cases:
 if two of the values are different from 0 but one is 0, the function excludes one of the non 0 values
 If two of the values are 0 and one is differnt from 0 it gives Inf for that one.
+
+Kommentar zu Treshhold, Treshold sollte irgendwo zwischen 1.01 und 1.5 liegen.
+```{r}
+#  Create a function that takes an input dataframe replaces all outliers surpassing the treshold with NA.
+creat_lof_func = function(input_df, treshhold){
+  temp_lof_df = as.data.frame(matrix(nrow = dim(input_df)[1], ncol = dim(input_df)[2])) #Create the dataframe
+  rownames(temp_lof_df) = rownames(input_df)
+  colnames(temp_lof_df) = colnames(input_df)
+  
+  i = 1
+  while (i <= dim(input_df)[1]) { 
+    for (j in 1:dim(input_df)[2]) {
+      x = as.matrix(c(input_df[i,j],input_df[i+1,j],input_df[i+2,j]))
+      lof_temp = lof (x,2) # calculate the lof of 3 datapoints 
+      temp_lof_df[i,j]=lof_temp[1] #write the lof values into the new dataframe
+      temp_lof_df[i+1,j]=lof_temp[2]
+      temp_lof_df[i+2,j]=lof_temp[3]
+    
+    }
+  
+    i = i + 3
+  }
+  
+  treshhold_clean_func <- function(y){ #function for replacing all values above the treshold with NA
+    if (y >= treshhold){
+      y <- NA
+    }else{
+      y <- 1
+    }
+  }
+
+  for (i in 1:dim(input_df)[1]) { #creating the removal matrix.
+    for (j in 1:dim(input_df)[2]) {
+      binary_removal_df[i,j]=treshhold_clean_func(temp_lof_df[i,j])
+    }
+  }
+  
+  output_df = input_df*binary_removal_df #replacing all values in the original df with NA
+  
+  return(output_df)
+}
+
+#Mean calculation
+
+mean_of_lof_func = function(input_df){
+  temp_df = as.data.frame(matrix(nrow = (dim(input_df)[1]/3), ncol = dim(input_df)[2])) #Create the dataframe
+  rownames(temp_df) = rownames(Data_copy)
+  colnames(temp_df) = colnames(RNAse_Data_norm)
+  
+  k = 1
+  i = 1
+  while (i <= dim(input_df)[1]) {
+    for (j in 1:dim(input_df)[2]) {
+      temp_df[k,j] = mean(c(input_df[i,j],input_df[i+1,j],input_df[i+2,j]), na.rm = TRUE)
+    }
+    k = k + 1
+    i = i + 3
+  }
+  return(temp_df)
+}
+
+
+
+treshhold = 1.1 # Hier wird die treshold eingesetzt 1.01 bis 1.5
+Ctrl_lof_df = mean_of_lof_func(creat_lof_func(Ctrl_Data_norm,treshhold)) 
+RNAse_lof_df = mean_of_lof_func(creat_lof_func(RNAse_Data_norm,treshhold))
+
+view(Ctrl_lof_df)
+view(RNAse_lof_df)
+```
+
+Nicht mehr verwendeter code, zum vergleich von lof_df mit norm df, zwecks der treshhold ermittlung
 ```{r}
 RNAse_Data_lof = as.data.frame(matrix(nrow = 3*3680, ncol=25))
 rownames(RNAse_Data_lof) = rownames(RNAse_Data_norm)
@@ -413,12 +488,38 @@ while (i <= dim(RNAse_Data_norm)[1]) {
     RNAse_Data_lof[i,j]=lof_temp[1]
     RNAse_Data_lof[i+1,j]=lof_temp[2]
     RNAse_Data_lof[i+2,j]=lof_temp[3]
-    
+
   }
-  
+
   i = i + 3
 }
+
+treshhold_clean_func <- function(y){
+    if (y >= 1.1){
+      y <- NA
+    }else{
+      y <- 1
+    }
+  return(y)
+}
+
+binary_removal_df = as.data.frame(matrix(nrow = 3*3680, ncol=25))
+rownames(binary_removal_df) = rownames(RNAse_Data_norm)
+colnames(binary_removal_df) = colnames(RNAse_Data_norm)
+
+for (i in 1:dim(RNAse_Data_norm)[1]) {
+  for (j in 1:dim(RNAse_Data_norm)[2]) {
+    binary_removal_df[i,j]=treshhold_clean_func(RNAse_Data_lof[i,j])
+  }
+}
+
+output_df = RNAse_Data_norm*binary_removal_df
+
+
+
+view(output_df)
+view(binary_removal_df)
 view(RNAse_Data_lof)
-view(RNAse_Data_norm)
+#view(RNAse_Data_norm)
 ```
 
