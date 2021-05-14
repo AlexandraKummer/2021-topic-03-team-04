@@ -5,15 +5,8 @@ date: "1 5 2021"
 output: html_document
 ---
 
-#this code turns out two dfs that have the ratio of the difference between the maximum and minimum values and their mean in a set
-# of 3 repititions in a fraction orderd by protein by fraction this will help us analyse the data nd see which
-# threshhold we want to set for eliminating points of data or merely selecting points of data
-# furter steps include: calculating the mean and sd of the ratios
-#                       evaluating the impact of NAs
-#                       selecting protein x fraction where data is significant
-#                       removing insignificant data from set
 
-Loading Data and Packages
+#Loading Data and Packages
 
 ```{r}
 library(ggplot2)
@@ -67,7 +60,7 @@ ignore
 ```
 
 
-
+#Normalization and Data cleaning
 Normalizing Protein data x/ntot   ##results in Norm_Data_df
 ```{r}
 #generates 
@@ -246,8 +239,6 @@ colnames(mean_clean_Ctrl_df) = c(paste("Ctrl","frac",0:25, sep = "_"))
 mean_clean_Ctrl_df = mean_clean_Ctrl_df[,-1]
 ```
 
-
-
 *works
 Creating df with median method ##results in 3680 RNAse_median_df & Ctrl_median_df
 Wird angenommen, dass der Median eine gute Methode für n=3 stichproben ist, die robust gegenüber OUtlieren ist."https://wis.kuleuven.be/statdatascience/robust/papers/2002/rousseeuwverboven-robustestimationinverysmallsampl.pdf"
@@ -309,7 +300,7 @@ colnames(Ctrl_mean_df) = c(paste("frac",0:25, sep = "_"))
 Ctrl_mean_df = Ctrl_mean_df[,-1]
 ```
 
-
+#Wilcox
 *(work in progresss)
 Wilcox Comparison tests between RNAse and Ctrl ##results in wilcox_pval_df
 ```{r}
@@ -384,3 +375,149 @@ focusing stat test on changes in fractions 19-25
 
 
 ```
+
+
+
+
+
+
+
+# Maxima detection
+
+
+the global maximum is easely accessible with the max(), the min with min() function
+we can acces the location with the which() function, and  we can order the data by size 1,2,3 etc 
+local maxima can be defined as =! global maximum and occuring after a decreasing trend on either side of the global maximum
+we can generte a test vecotor:
+exp_maxima_vec <-c(1,2,3,2,1,6,5,4,2,2,3,4,3,2,5,3,2,1,3,1,4,3,2,2,1)
+we expect the maxima to be at positions 3,6,12,15,19,21
+
+the input should be a vector containing the 25 fractions of normalized protein data
+
+*works generating maxima detection testing vector exp_maxima_vec
+```{r}
+#test vector to look at a complex maxima detection
+exp_maxima_vec<-c(1,2,3,2,1,6,5,4,2,2,3,4,3,2,5,3,2,1,3,1,4,3,2,2,1)
+barplot(exp_maxima_vec)
+```
+
+
+*works This chunk contains maxima_loc_func a length 25 logicl vec, containing all maxima as True, and a 
+Output: maxima_loc_func (x)
+testing outputs:    
+---exp_maxima_logic_max
+---Maxima_location_vector
+---exp_maxima_vec
+
+```{r}
+'THIS SHIT FINALLY WORKS'
+maxima_loc_func <-function(x){
+  
+  logic_return <-logical(length = 25) #logic vector 25x FALSE
+  i <- 1
+  while (i <= 25){
+# for the first element
+    if (i == 1){
+      if (x[i] > x[i+1]){
+        logic_return[i] <- TRUE
+      }
+#for the elemets 2-24
+    }else if ( i < length(x)){
+        if (x[i] > x[i+1] & x[i] > x[i-1]){
+          logic_return[i] <- TRUE
+        }
+#for the last element
+    }else if ( i == 25){
+      if (x[i] > x[i-1]){
+        logic_return[i] <- TRUE
+      } 
+    }
+    i  <- i+1
+  }
+  return(logic_return)
+}
+
+exp_maxima_logic_max <- maxima_loc_func(exp_maxima_vec)
+Maxima_location_vector <- Which(exp_maxima_logic_max)
+exp_maxima_vec[Maxima_location_vector]
+
+```
+
+an alternative to above function not tested yet
+```{r}
+
+
+maxima_loc_func <-function(x){
+  
+  logic_return <-logical(length = 25) #logic vector 25x FALSE
+  
+  for (i in x ){
+
+# for the first elemet
+    if (match(i,x) == 1){
+      if (x[i] > x[match(i,x)+1]){
+        logic_return[i] <- TRUE
+      }
+#for the elemets 2-24
+    }else if ( match(i,x) < length(x)){
+        if (i > x[match(i,x)+1] & i > x[match(i,x)-1]){
+          logic_return[i] <- TRUE
+        }
+#for the lase element
+    }else{
+      if (i > x[match(i,x)-1]){
+        logic_return[i] <- TRUE
+      } 
+    }
+  }
+  return(logic_return)
+}
+
+
+
+exp_maxima_logic_max <- maxima_loc_func(exp_maxima_vec)
+ exp_maxima_logic_max
+ 
+ 
+ 
+```
+
+
+
+Idea for the "binning" of the maxima as in location only maxima which are "greater" local maxima
+eg 12143....    would be 4 not 2 
+so we split up the vector into smaller chunks vector[i:i+j] then check if each value is the maximum in that range then move along shifting by 1 so starting at the second entry in the vector and so on if the reading frame pases over the value and leaves it being true then the values is defined as a local maximum per bin size
+
+```{r}
+'in words:
+define a "reading" frame that checks if each value in the frame is the maximum or not
+so we want "m" elements to be selected at position "n"then we want to check if each value is the maximum in the m elements,
+when the reading frame moves to start at "n+1" we want the 
+
+idea: what if the function always acceses the same logical vector but always accesses different positions to change the values of the previous run, could even be the same logical vector generated by maxima_loc_func then wed have one output only, if (m == 1|2) then no binsize is applied, if (m >= 3) binfunction  '
+
+
+# m = binsize , n = element number
+# x = a numeric vector, m = binsize, less than 3 not useful
+max_bin_func <-function(x,m){
+logic_return2 <-logical(length = 25)
+n <-1
+while (n <= 25){
+  logic_return2[which.max(x[n:n+m])] <- TRUE
+ n <- n+1
+}
+return(logic_return2)
+}
+
+max_bin_func(exp_maxima_vec,5)
+'need function that assings true in a logical( length = m ) to the value which is the maximum'
+
+
+
+
+'OTHER random idea, what if we check the surrounding values of each maximum to see of its the global maximum in that area, would probs be more efficient
+ so if n is a maximum, we check [n-m:n+m] and see if its = to the global max of the area, issues with two identical maxima....
+'
+# just noting that exp_maxima_vec[1:3]<-c(11:13) works for the replacing of values so value replacement works easily
+```
+
