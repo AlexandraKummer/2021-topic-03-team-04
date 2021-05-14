@@ -433,7 +433,10 @@ creat_lof_func = function(input_df, treshhold){
       y <- 1
     }
   }
-
+  binary_removal_df = as.data.frame(matrix(nrow = dim(input_df)[1], ncol = dim(input_df)[2]))
+  rownames(binary_removal_df) = rownames(input_df)
+  colnames(binary_removal_df) = colnames(input_df)
+  
   for (i in 1:dim(input_df)[1]) { #creating the removal matrix.
     for (j in 1:dim(input_df)[2]) {
       binary_removal_df[i,j]=treshhold_clean_func(temp_lof_df[i,j])
