@@ -475,7 +475,7 @@ view(RNAse_lof_df)
 ```
 
 Nicht mehr verwendeter code, zum vergleich von lof_df mit norm df, zwecks der treshhold ermittlung
-```{r}
+break ```{r}
 RNAse_Data_lof = as.data.frame(matrix(nrow = 3*3680, ncol=25))
 rownames(RNAse_Data_lof) = rownames(RNAse_Data_norm)
 colnames(RNAse_Data_lof) = colnames(RNAse_Data_norm)
@@ -520,6 +520,11 @@ output_df = RNAse_Data_norm*binary_removal_df
 view(output_df)
 view(binary_removal_df)
 view(RNAse_Data_lof)
-#view(RNAse_Data_norm)
+view(RNAse_Data_norm)
+```'
+Continuing:
+
+```{r}
+
 ```
 

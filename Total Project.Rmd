@@ -13,6 +13,7 @@ library("dplyr")
 library("DDoutlier")
 library("dbscan")
 library("rstatix")
+library("psych")
 
 #loading data into Raw_Data dataframe
 Raw_Data<- read.table("c://Data_Analysis//RDeeP_A549_NS.csv", header=TRUE, row.names=1, sep = ";")
@@ -21,11 +22,423 @@ Raw_Data<- read.table("c://Data_Analysis//RDeeP_A549_NS.csv", header=TRUE, row.n
 Data_copy = Raw_Data
 ```
 
+##Umformatieren der Daten
+Die Raw daten werden umsortiert.
+
+In dem unterstehenden Chunk will ich: 2 dataframes erstellen mit 3x3680 Zeilen und 25 spalten, wo einmal alle CTRl repetitions und einmal alle RNAse repititons als eigene zeile drin sind und die Spalten den 25 fractions entsprechen.
+
+Zeile X in der Raw data entspricht nun Zeilen X*3-2 bis X*3 im neuen Dataset
 ```{r}
+Ctrl_Matrix = matrix(nrow = 3*3680, ncol=25)
+ 
+k = 1 ## für die Zeilen in der Raw Tabelle.
+k_counter = 0 ##Für die Repetition die Gerade betrachtet wird (1,2 oder 3)
+for (i in 1:dim(Ctrl_Matrix)[1]) { ##Für die Zeilen in der Neuen Matrix
+  if (k_counter == 3){ ##Für Je 3 Zeilen in der alten Matrix wird 3 mal die selbe Zeile aus dem Raw dataframe verwendet.
+    k = k + 1
+    k_counter = 1
+  } else {
+    k_counter = k_counter + 1
+  }
+  
+  if (k_counter == 0 | k_counter == 1 ) { ##Repetion 1
+    j = 1
+    l = 1
+    while (j <= dim(Ctrl_Matrix)[2]) {
+      Ctrl_Matrix[i,j] = Data_copy[k,l]
+      l = l + 6
+      j = j + 1
+    }
+  }
+  if (k_counter == 2) { ##Repetion 2
+    j = 1
+    l = 3
+    while (j <= dim(Ctrl_Matrix)[2]) {
+      Ctrl_Matrix[i,j] = Data_copy[k,l]
+      l = l + 6
+      j = j + 1
+    }
+  }
+  if (k_counter == 3) { ##Repetion 3
+    j = 1
+    l = 5
+    while (j <= dim(Ctrl_Matrix)[2]) {
+      Ctrl_Matrix[i,j] = Data_copy[k,l]
+      l = l + 6
+      j = j + 1
+    }
+  }
+  
+}
+```
+
+Selbes für die RNAse
+```{r}
+RNAse_Matrix = matrix(nrow = 3*3680, ncol=25)
+ 
+k = 1 ## für die Zeilen in der Raw Tabelle.
+k_counter = 0 ##Für die Repetition die Gerade betrachtet wird (1,2 oder 3)
+for (i in 1:dim(RNAse_Matrix)[1]) { ##Für die Zeilen in der Neuen Matrix
+  if (k_counter == 3){ ##Für Je 3 Zeilen in der alten Matrix wird 3 mal die selbe Zeile aus dem Raw dataframe verwendet.
+    k = k + 1
+    k_counter = 1
+  } else {
+    k_counter = k_counter + 1
+  }
+  
+  if (k_counter == 0 | k_counter == 1 ) { ##Repetion 1
+    j = 1
+    l = 2
+    while (j <= dim(RNAse_Matrix)[2]) {
+      RNAse_Matrix[i,j] = Data_copy[k,l]
+      l = l + 6
+      j = j + 1
+    }
+  }
+  if (k_counter == 2) { ##Repetion 2
+    j = 1
+    l = 4
+    while (j <= dim(RNAse_Matrix)[2]) { 
+      RNAse_Matrix[i,j] = Data_copy[k,l]
+      l = l + 6
+      j = j + 1
+    }
+  }
+  if (k_counter == 3) { ##Repetion 3
+    j = 1
+    l = 6
+    while (j <= dim(RNAse_Matrix)[2]) {
+      RNAse_Matrix[i,j] = Data_copy[k,l]
+      l = l + 6
+      j = j + 1
+    }
+  }
+}
+```
+
+Erstellen meiner 2 neuen Dataframes
+```{r}
+##Ctrl Dataframe
+Ctrl_Data = as.data.frame(Ctrl_Matrix)
+
+#Colnames
+
+for (i in 1:25) {
+  s = paste("Fraction",i,sep="_")
+  colnames(Ctrl_Data)[i] = s
+}
+
+#Rownames
+
+k = 1 ## für die Zeilen in der Raw Tabelle.
+k_counter = 0 ##Für die Repetition die Gerade betrachtet wird (1,2 oder 3)
+for (i in 1:dim(Ctrl_Matrix)[1]) {
+  if (k_counter == 3){ ##Für Je 3 Zeilen in der alten Matrix wird 3 mal die selbe Zeile aus dem Raw dataframe verwendet.
+    k = k + 1
+    k_counter = 1
+  } else {
+    k_counter = k_counter + 1
+  }
+  s = paste(rownames(Data_copy)[k],"Rep",k_counter,sep="_")
+  rownames(Ctrl_Data)[i] = s
+}
+
+##RNAse Dataframe
+RNAse_Data = as.data.frame(RNAse_Matrix)
+
+#Colnames
+
+for (i in 1:25) {
+  s = paste("Fraction",i,sep="_")
+  colnames(RNAse_Data)[i] = s
+}
+
+#Rownames
+
+k = 1 ## für die Zeilen in der Raw Tabelle.
+k_counter = 0 ##Für die Repetition die Gerade betrachtet wird (1,2 oder 3)
+for (i in 1:dim(RNAse_Matrix)[1]) {
+  if (k_counter == 3){ ##Für Je 3 Zeilen in der alten Matrix wird 3 mal die selbe Zeile aus dem Raw dataframe verwendet.
+    k = k + 1
+    k_counter = 1
+  } else {
+    k_counter = k_counter + 1
+  }
+  s = paste(rownames(Data_copy)[k],"Rep",k_counter,sep="_")
+  rownames(RNAse_Data)[i] = s
+}
+Fraction_names = colnames(RNAse_Data)
+```
+
+##Normalization
+
+Create dataframe with total protein data. 
+```{r}
+Total_Protein = matrix(ncol=25,nrow=6)
+
+for (j in 1:25) { # Alle Spalten werden durchgegangen
+  k = 1          # K nummeriert die Spalte in Ctrl_Data bzw. RNAse_Date
+  Protein_Sum = 0
+  while (k <= dim(Ctrl_Data)[1]){
+    Protein_Sum = Protein_Sum + Ctrl_Data[k,j] # Jede Dritte Zeile wird aufsummiert.
+    k = k + 3
+  }
+  Total_Protein[1,j]=Protein_Sum
+}
+## Wiederholung des Ganzen für die übrigen 5 Zeilen
+for (j in 1:25) {
+  k = 2
+  Protein_Sum = 0
+  while (k <= dim(Ctrl_Data)[1]){
+    Protein_Sum = Protein_Sum + Ctrl_Data[k,j]
+    k = k + 3
+  }
+  Total_Protein[2,j]=Protein_Sum
+}
+
+for (j in 1:25) {
+  k = 3
+  Protein_Sum = 0
+  while (k <= dim(Ctrl_Data)[1]){
+    Protein_Sum = Protein_Sum + Ctrl_Data[k,j]
+    k = k + 3
+  }
+  Total_Protein[3,j]=Protein_Sum
+}
+for (j in 1:25) { # Alle Spalten werden durchgegangen
+  k = 1          # K nummeriert die Spalte in Ctrl_Data bzw. RNAse_Date
+  Protein_Sum = 0
+  while (k <= dim(RNAse_Data)[1]){
+    Protein_Sum = Protein_Sum + RNAse_Data[k,j] # Jede Dritte Zeile wird aufsummiert.
+    k = k + 3
+  }
+  Total_Protein[4,j]=Protein_Sum
+}
+
+for (j in 1:25) {
+  k = 2
+  Protein_Sum = 0
+  while (k <= dim(RNAse_Data)[1]){
+    Protein_Sum = Protein_Sum + RNAse_Data[k,j]
+    k = k + 3
+  }
+  Total_Protein[5,j]=Protein_Sum
+}
+
+for (j in 1:25) {
+  k = 3
+  Protein_Sum = 0
+  while (k <= dim(RNAse_Data)[1]){
+    Protein_Sum = Protein_Sum + RNAse_Data[k,j]
+    k = k + 3
+  }
+  Total_Protein[6,j]=Protein_Sum
+}  
+
+Total_Protein_Data = as.data.frame(Total_Protein)
+colnames(Total_Protein_Data)=colnames(RNAse_Data)
+rownames(Total_Protein_Data)=c("Ctrl_Rep1","Ctrl_Rep2","Ctrl_Rep3","RNAse_Rep1","RNAse_Rep2","RNAse_Rep3")
+
+Total_Protein_Sum = rowSums(Total_Protein_Data) # Calculate the Total amount of all protein in one repetition
+
+Total_Protein_norm = Total_Protein_Data #Kopiere Total Protein Data
+
+Total_Protein_norm = Total_Protein_norm/t(Total_Protein_Sum) #normierung der Totalen Proteinmenge pro fraction
+```
+
+Normalize the RNAse and Ctrl dataset
+```{r}
+RNAse_Data_norm = RNAse_Data
+i = 1
+while (i <= dim(RNAse_Data)[1]) { #Alle Zeilen Durchgehen
+  for (j in 1:25) { # Teile alle Fractions of Rep1 durch Rep1 total protein sum.
+    RNAse_Data_norm[i,j] = RNAse_Data[i,j]/Total_Protein_Sum[4]
+  }
+  i = i+1
+  
+  for (j in 1:25) {# Teile alle Fractions of Rep2 durch Rep2 total protein sum.
+    RNAse_Data_norm[i,j] = RNAse_Data[i,j]/Total_Protein_Sum[5]
+  }
+  i = i+1
+  
+  for (j in 1:25) {# Teile alle Fractions of Rep3 durch Rep3 total protein sum.
+    RNAse_Data_norm[i,j] = RNAse_Data[i,j]/Total_Protein_Sum[4]
+  }
+  i = i+1
+}
+
+# Jetzt das selbe nochmal für Ctrl
+Ctrl_Data_norm = Ctrl_Data
+i = 1
+while (i <= dim(Ctrl_Data)[1]) { #Alle Zeilen Durchgehen
+  for (j in 1:25) { # Teile alle Fractions of Rep1 durch Rep1 total protein sum.
+    Ctrl_Data_norm[i,j] = Ctrl_Data[i,j]/Total_Protein_Sum[1]
+  }
+  i = i+1
+  
+  for (j in 1:25) {# Teile alle Fractions of Rep2 durch Rep2 total protein sum.
+    Ctrl_Data_norm[i,j] = Ctrl_Data[i,j]/Total_Protein_Sum[2]
+  }
+  i = i+1
+  
+  for (j in 1:25) {# Teile alle Fractions of Rep3 durch Rep3 total protein sum.
+    Ctrl_Data_norm[i,j] = Ctrl_Data[i,j]/Total_Protein_Sum[3]
+  }
+  i = i+1
+}
+```
+
+Normalizing with Izars version, so we have all the things we need going forward
+```{r}
+#generates 
+T_P_S_df <- data.frame(Total_Protein_Sum)
+T_P_S_vec <-c(T_P_S_df[1,],T_P_S_df[4,],T_P_S_df[2,],T_P_S_df[5,],T_P_S_df[3,],T_P_S_df[6,])
+T_P_S_vec_div_func <- function(x){
+  x/T_P_S_vec
+}
+Norm_Data_df <- t(data.frame(apply(Raw_Data,1,T_P_S_vec_div_func)))
+
+# Normailized RNAse only
+RNAse_select_vec <- c(seq(from =2, to = 150, by = 2))
+norm_RNAse <-data.frame(Norm_Data_df[,RNAse_select_vec])
+
+#Normalized Ctrl only
+Ctrl_select_vec <- seq(from =1, to = 150, by = 2)
+norm_Ctrl <- data.frame(Norm_Data_df[,Ctrl_select_vec])
+```
+
+
+
+
+
+
+##Data Cleanup
+
+Creating 2 df containing the Cleaned data via the lof method.
+
+```{r}
+#  Create a function that takes an input dataframe replaces all outliers surpassing the treshold with NA.
+creat_lof_func = function(input_df, treshhold){
+  temp_lof_df = as.data.frame(matrix(nrow = dim(input_df)[1], ncol = dim(input_df)[2])) #Create the dataframe
+  rownames(temp_lof_df) = rownames(input_df)
+  colnames(temp_lof_df) = colnames(input_df)
+  
+  i = 1
+  while (i <= dim(input_df)[1]) { 
+    for (j in 1:dim(input_df)[2]) {
+      x = as.matrix(c(input_df[i,j],input_df[i+1,j],input_df[i+2,j]))
+      lof_temp = lof (x,2) # calculate the lof of 3 datapoints 
+      temp_lof_df[i,j]=lof_temp[1] #write the lof values into the new dataframe
+      temp_lof_df[i+1,j]=lof_temp[2]
+      temp_lof_df[i+2,j]=lof_temp[3]
+    
+    }
+  
+    i = i + 3
+  }
+  
+  treshhold_clean_func <- function(y){ #function for replacing all values above the treshold with NA
+    if (y >= treshhold){
+      y <- NA
+    }else{
+      y <- 1
+    }
+  }
+
+  for (i in 1:dim(input_df)[1]) { #creating the removal matrix.
+    for (j in 1:dim(input_df)[2]) {
+      binary_removal_df[i,j]=treshhold_clean_func(temp_lof_df[i,j])
+    }
+  }
+  
+  output_df = input_df*binary_removal_df #replacing all values in the original df with NA
+  
+  return(output_df)
+}
+
+#Mean calculation
+
+mean_of_lof_func = function(input_df){
+  temp_df = as.data.frame(matrix(nrow = (dim(input_df)[1]/3), ncol = dim(input_df)[2])) #Create the dataframe
+  rownames(temp_df) = rownames(Data_copy)
+  colnames(temp_df) = colnames(RNAse_Data_norm)
+  
+  k = 1
+  i = 1
+  while (i <= dim(input_df)[1]) {
+    for (j in 1:dim(input_df)[2]) {
+      temp_df[k,j] = mean(c(input_df[i,j],input_df[i+1,j],input_df[i+2,j]), na.rm = TRUE)
+    }
+    k = k + 1
+    i = i + 3
+  }
+  return(temp_df)
+}
+
+
+
+treshhold = 1.1 # Hier wird die treshold eingesetzt 1.01 bis 1.5
+Ctrl_lof_df = mean_of_lof_func(creat_lof_func(Ctrl_Data_norm,treshhold)) 
+RNAse_lof_df = mean_of_lof_func(creat_lof_func(RNAse_Data_norm,treshhold))
+```
+
+Creating df with median method ##results in 3680 RNAse_median_df & Ctrl_median_df
+Wird angenommen, dass der Median eine gute Methode für n=3 stichproben ist, die robust gegenüber OUtlieren ist."https://wis.kuleuven.be/statdatascience/robust/papers/2002/rousseeuwverboven-robustestimationinverysmallsampl.pdf"
+
+```{r}
+RNAse_median_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+n <-1
+while (n < 75){
+    temp_df <- data.frame(norm_RNAse[,n],norm_RNAse[,n+1],norm_RNAse[,n+2])
+    Output_df <-data.frame(apply(temp_df,1,median))
+    RNAse_median_df<- cbind(RNAse_median_df,Output_df)
+    n <- n + 3
+}
+colnames(RNAse_median_df) = c(paste("frac",0:25, sep = "_"))
+RNAse_median_df = RNAse_median_df[,-1]
+
+
+
+Ctrl_median_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+n <-1
+while (n < 75){
+    temp_df <- data.frame(norm_Ctrl[,n],norm_Ctrl[,n+1],norm_Ctrl[,n+2])
+    Output_df <-data.frame(apply(temp_df,1,median))
+    Ctrl_median_df<- cbind(Ctrl_median_df,Output_df)
+    n <- n + 3
+}
+colnames(Ctrl_median_df) = c(paste("frac",0:25, sep = "_"))
+Ctrl_median_df = Ctrl_median_df[,-1]
+
+
 
 ```
 
+
+*works----
+now by arithmetic mean ##results in RNAse_mean_df & Ctrl_mean_df
 ```{r}
+RNAse_mean_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+n <-1
+while (n < 75){
+    temp_df <- data.frame(norm_RNAse[,n],norm_RNAse[,n+1],norm_RNAse[,n+2])
+    Output_df <-data.frame(apply(temp_df,1,mean))
+    RNAse_mean_df<- cbind(RNAse_mean_df,Output_df)
+    n <- n + 3
+}
+colnames(RNAse_mean_df) = c(paste("frac",0:25, sep = "_"))
+RNAse_mean_df = RNAse_mean_df[,-1]
 
+
+
+Ctrl_mean_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+n <-1
+while (n < 75){
+    temp_df <- data.frame(norm_Ctrl[,n],norm_Ctrl[,n+1],norm_Ctrl[,n+2])
+    Output_df <-data.frame(apply(temp_df,1,mean))
+    Ctrl_mean_df<- cbind(Ctrl_mean_df,Output_df)
+    n <- n + 3
+}
+colnames(Ctrl_mean_df) = c(paste("frac",0:25, sep = "_"))
+Ctrl_mean_df = Ctrl_mean_df[,-1]
 ```
-
