@@ -12,55 +12,14 @@ output: html_document
 library(ggplot2)
 library(tidyverse)
 library(dplyr)
-
 #loading data into Raw_Data dataframe
 Raw_Data<- read.table("c://Data_Analysis//RDeeP_A549_NS.csv", header=TRUE, row.names=1, sep = ";")
-
-#function for ratio of max-min to mean allows setting of univeral limit
-min_max_mean_func <- function(x){
-  (max(x)-min(x))/mean(x)
-}
-```
-ignore
-```{r}
-
-#RNAse Factor df         
-#RNAse_frac_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data)) #creating a dataframe to save results too
-
-#n <-2 # for RNAse n = 2 for ctrl n =1 corresponding to position in dataframe
-#while (n < 150){ # this will iterate trough all the fractions
-
- #   temp_df <- data.frame(Raw_Data[,n],Raw_Data[,n+2],Raw_Data[,n+4])  # a temporary df for sotring the 3 reps of each fraction
-    
-  #  Output_df <-data.frame(apply(temp_df,1,min_max_mean_func))     #the function for comparing (max-min)/mean is applied across the rows apply(...,1,..) for rows 2 for cols
-    
-   # RNAse_frac_df <- cbind(RNAse_frac_df,Output_df)           #each run through adds a colum to RNAse_frac_df, we end with 26 cols
-    
-  #  n <- n + 6     # the counter is increased to select the next fraction
-#}
-#colnames(RNAse_frac_df) = c(paste("frac",0:25, sep = "_"))
-
-#RNAse_frac_df = RNAse_frac_df[,-1] #this code deletes the unnessecary first null colum
-```
-ignore
-```{r}
-#
-#Control Factor df
-#ctrl_frac_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
-#n <-1
-#while (n < 150){
-#    temp_df <- data.frame(Raw_Data[,n],Raw_Data[,n+2],Raw_Data[,n+4]) 
-#    Output_df <-data.frame(apply(temp_df,1,min_max_mean_func))
-#    ctrl_frac_df <- cbind(ctrl_frac_df,Output_df)
-#    n <- n + 6
-#}
-#colnames(ctrl_frac_df) = c(paste("frac",0:25, sep = "_"))
-
-#ctrl_frac_df = ctrl_frac_df[,-1] #this code deletes the unnessecary first null colum
 ```
 
 
-#Normalization and Data cleaning
+
+
+#Normalization 
 Normalizing Protein data x/ntot   ##results in Norm_Data_df
 ```{r}
 #generates 
@@ -85,7 +44,7 @@ Ctrl_select_vec <- seq(from =1, to = 150, by = 2)
 norm_Ctrl <- data.frame(Norm_Data_df[,Ctrl_select_vec])
 ```
 
-
+#LOF gefummel ----
 *(work in progress)
 Trying to apply LOF/lof   ##results in NoOut_norm_RNAse_df & NoOut_norm_Ctrl_df
 ```{r}
@@ -296,6 +255,7 @@ colnames(mean_clean_Ctrl_df) = c(paste("Ctrl","frac",0:25, sep = "_"))
 mean_clean_Ctrl_df = mean_clean_Ctrl_df[,-1]
 ```
 
+#Cleaning Data with mean and median methods
 *works----
 Creating df with median method ##results in 3680 RNAse_median_df & Ctrl_median_df
 Wird angenommen, dass der Median eine gute Methode für n=3 stichproben ist, die robust gegenüber OUtlieren ist."https://wis.kuleuven.be/statdatascience/robust/papers/2002/rousseeuwverboven-robustestimationinverysmallsampl.pdf"
@@ -588,4 +548,10 @@ while (n <= 25){
 
 #another idea is to select only the maxima then just work on that vector set a fraction distance which they can be appart and if theyre to far appart dont compare essentially work with both the location vector as well as the maxima value vector'
 ```
+
+
+
+
+plotting RNAse_Data_lof_tot and Ctrl_Data_lof_tot
+
 
