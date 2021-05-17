@@ -464,17 +464,17 @@ RNAse_Data_norm
 Ctrl_Data_norm
 Total_Protein_norm
 
-Ganz Aktuell zum weiterarbeiten die gecleanten:
+Ganz Aktuell zum weiterarbeiten die gecleanten(alle mit dimension(3680x25)):
 
 RNAse:
-RNAse_mean_df
-RNAse_median_df
-RNAse_lof_df
+RNAse_mean_df 
+RNAse_median_df 
+RNAse_lof_df 
 
 Ctrl:
-Ctrl_mean_df
-Ctrl_median_df
-Ctrl_lof_df
+Ctrl_mean_df 
+Ctrl_median_df 
+Ctrl_lof_df 
 ```{r}
 #RNAse
 RNAse_mean_df
