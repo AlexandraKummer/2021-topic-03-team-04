@@ -451,3 +451,40 @@ while (n < 75){
 colnames(Ctrl_mean_df) = c(paste("frac",0:25, sep = "_"))
 Ctrl_mean_df = Ctrl_mean_df[,-1]
 ```
+
+#Zussammenfassung der Wichtigsten Dataframes etc. die wir aktuell haben.
+Raw:
+Data_copy
+RNAse_Data
+Ctrl_Data
+Total_Protein_Data
+
+Normiert:
+RNAse_Data_norm
+Ctrl_Data_norm
+Total_Protein_norm
+
+Ganz Aktuell zum weiterarbeiten die gecleanten:
+
+RNAse:
+RNAse_mean_df
+RNAse_median_df
+RNAse_lof_df
+
+Ctrl:
+Ctrl_mean_df
+Ctrl_median_df
+Ctrl_lof_df
+```{r}
+#RNAse
+RNAse_mean_df
+RNAse_median_df
+RNAse_lof_df
+
+#Ctrl:
+Ctrl_mean_df
+Ctrl_median_df
+Ctrl_lof_df
+
+```
+
