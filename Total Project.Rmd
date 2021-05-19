@@ -488,3 +488,59 @@ Ctrl_lof_df
 
 ```
 
+
+
+#Maxima Detection
+testing vector
+```{r}
+#test vector to look at a complex maxima detection
+exp_maxima_vec<-c(1,2,3,2,1,6,5,4,2,2,3,4,3,2,5,3,2,1,3,1,4,3,2,2,1)
+barplot(exp_maxima_vec)
+```
+
+Maxima Detection function that detects all local maxima and can give out position & value
+*works This chunk contains maxima_loc_func a length 25 logicl vec, containing all maxima as True, and a 
+Output: maxima_loc_func (x)
+testing outputs:    
+---exp_maxima_logic_max
+---Maxima_location_vector
+---exp_maxima_vec
+
+```{r}
+'THIS SHIT FINALLY WORKS'
+
+maxima_loc_func <-function(x,threshhold){ # x = Data_vec , threshold = % global max that is recognized as a local max
+  
+  threshhold_val <- max(x)*threshhold #could define a threshold 
+  logic_return <-logical(length = length(x)) #logic vector 25x FALSE
+  i <- 1
+  while (i <= 25){
+# for the first element
+    if (i == 1){
+      if (x[i] > x[i+1] & x[i] > threshhold_val){ #implementation for the threshhold ?
+        logic_return[i] <- TRUE
+      }
+#for the elemets 2-24
+    }else if ( i < length(x)){
+        if (x[i] > x[i+1] & x[i] > x[i-1] & x[i] > threshhold_val){ #implementation for the threshhold ?
+          logic_return[i] <- TRUE
+        }
+#for the last element
+    }else if ( i == length(x)){
+      if (x[i] > x[i-1] & x[i] > threshhold_val){ #implementation for the threshhold ?
+        logic_return[i] <- TRUE
+      } 
+    }
+    i  <- i+1
+  }
+  return(logic_return) #returns the edited logic vector
+}
+
+exp_maxima_logic_max <- maxima_loc_func(exp_maxima_vec,0.6) #using maxima loc func on the tesing vector
+
+Maxima_location_vector <- which(exp_maxima_logic_max) #returns positions of TRUE
+
+exp_maxima_vec[Maxima_location_vector] #selection of the values of maxima with position vector
+
+```
+
