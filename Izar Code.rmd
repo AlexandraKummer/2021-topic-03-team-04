@@ -454,6 +454,7 @@ maxima_loc_func <-function(x,threshhold){ # x = Data_vec , threshold = % global 
     i  <- i+1
   }
   return(logic_return) #returns the edited logic vector
+  
 }
 
 exp_maxima_logic_max <- maxima_loc_func(exp_maxima_vec,0.6) #using maxima loc func on the tesing vector
