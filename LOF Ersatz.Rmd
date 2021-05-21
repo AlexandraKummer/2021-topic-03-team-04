@@ -1,0 +1,50 @@
+---
+title: "LOF Ersatz"
+output: html_document
+---
+
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+#Determine the mean of the 2 most similar replicates
+
+#Instead of lof
+
+
+outlier.clean_func <- function(input) {
+    new_clean_df <- as.data.frame(matrix(nrow = (dim(input)[1]/3), ncol = dim(input)[2])) ##Create the dataframe
+    rownames(new_clean_df) <- rownames(Data_copy)
+    colnames(new_clean_df) <- colnames(RNAse_Data_norm)
+
+
+    i <- 1
+    while (i <= dim(input)[1]) {          #i = rows
+        for (j in 1:dim(input)[2]) {        # j = columns 
+            x1 <- input[i,j]                  # 1. row, 1. column
+            x2 <- input[i+1,j]                # 2. row 1. column
+            x3 <- input[i+2,j]                # 3. row 1. column
+            if( (abs(x1-x2)<abs(x1-x3)) && (abs(x1-x2)<abs(x2-x3)) ) {
+                mean <- mean(c(x1,x2))
+            } else if( (abs(x1-x3)<abs(x1-x2)) && (abs(x1-x3)<abs(x2-x3)) ) {
+                mean <- mean(c(x1,x3))
+            } else {
+                mean <- mean(c(x2,x3))
+            }
+            new_clean_df[(i/3)+1,j] <- mean
+        }
+        i <- i + 3
+    }
+    return(new_clean_df)
+}
+
+Ctrl_new_clean_df= outlier.clean_func(Ctrl_Data_norm)
+view(Ctrl_new_clean_df) 
+
+
+```
+
