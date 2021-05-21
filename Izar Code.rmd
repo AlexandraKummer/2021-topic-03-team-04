@@ -555,8 +555,98 @@ while (n <= 25){
 ```
 
 
+```{r}
+'THIS SHIT FINALLY WORKS'
 
 
-plotting RNAse_Data_lof_tot and Ctrl_Data_lof_tot
+
+
+maxima_loc_func <-function(x,threshhold){ # x = Data_vec , threshold = % global max that is recognized as a local max
+  
+  threshhold_val <- max(x)*threshhold #could define a threshold 
+  logic_return <-logical(length = length(x)) #logic vector 25x FALSE
+  i <- 1
+  while (i <= 25){
+# for the first element
+    if (i == 1){
+      if (x[i] > x[i+1] & x[i] > threshhold_val){ #implementation for the threshhold ?
+        logic_return[i] <- TRUE
+      }
+#for the elemets 2-24
+    }else if ( i < length(x)){
+        if (x[i] > x[i+1] & x[i] > x[i-1] & x[i] > threshhold_val){ #implementation for the threshhold ?
+          logic_return[i] <- TRUE
+        }
+#for the last element
+    }else if ( i == length(x)){
+      if (x[i] > x[i-1] & x[i] > threshhold_val){ #implementation for the threshhold ?
+        logic_return[i] <- TRUE
+      } 
+    }
+    i  <- i+1
+  }
+  return(logic_return) #returns the edited logic vector
+  
+}
+
+maxima_df_func <- function(x,threshhold)
+n <-1
+while ( n <= dim(x)){
+     Output_df maxima_locas.vector(x[i,])
+  
+  
+  
+  n+1
+}
+
+
+
+```
+
+
+looking at alex cod
+```{r}
+
+test_matrix <- matrix(rep(test_vert, 3), byrow=TRUE, nrow=3, ncol=25)
+test_df <- data.frame(test_matrix)
+
+
+max_detec_df <- function(x){
+  j=1
+  Input_df <- x
+  for (j in 1:dim(Input_df)[1]){#j soll die nummer der Zeile annehmen, um auf die Zeile im if statement zuzugreifen
+   while (i <= 1:dim(Input_df)[2]){#für eine Zeile weren alle spalten durchgetestet
+    if (i == 1){#für die erste spalte, die nur rechts ein vergleichselement hat
+      if(Input_df[j,i] > Input_df[j,i+1]){
+        Input_df[j,i] <- i #hier soll der leere Vektor als neues element die stelle des maximus bekommen
+      }else{
+        Input_df[j,i] <- 0#wenn stelle nicht eingesetzt soll der Wert 0 rein, damit der Vektor weiterhin 25 elemente hat
+      }
+    }
+    if (i < dim(Input_df)[2]&& i!=1){
+      if(Input_df[j,i]>Input_df[j,i+1] && Input_df[j,i]> Input_df[j,i-1]){
+        Input_df[j,i] <- i
+      }else {
+        Input_df[j,i] <- 0
+      }
+    }
+    if (i == dim(Input_df)[2]){
+      if(Input_df[j,i]>Input_df[j,i-1]){
+        Input_df[j,i] <- i
+      }else{
+        Input_df[j,i] <- 0
+        }
+      }
+    i=i+1
+    }#nachdem der vektor für eine Zeile fertig ist, soll er in die entsprechenden Zeile der Matrixgefüllt werden
+    
+  }#j wird jetzt um 1 erhöht, der temp_vec wird mit den locations aus der neuen Zeile überschrieben und dann in die nächste Zeile der Matrix gefüllt
+  return(temp_matrix)#am Ende soll eine Martrix entstehen, die für jedes Protein den Vektor enthält
+  
+}
+
+test_lauf_zwei <- max_detec_df(test_df)#code läuft nicht, ist also kot lul. irgendeine bedingung hat Länge > 1 und das füllen der MAtrix gibt Ersetzung hat die Länge 0
+```
+
 
 
