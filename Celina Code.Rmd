@@ -67,6 +67,56 @@ view(Ctrl_new_clean_df)
 
 ```
     
+Maxima detection
+how to apply maxima function on our dataframe
+
+diff wants a matrix or a vector rather than a data frame --> data.frame(diff(as.matrix(df)))
+
+
+#difference function in R
+
+	diff(c(2,3,5,18,4,6,4),lag=1)
+
+diff() with lag=1 calculates difference between 2nd element and 1st element and then difference between 3rd element and 2nd element and so on.
+
+
+
+
+sign R function returns the signs of numeric elements. The value 1 is returned for positive numbers, the value 0 is returned for zero, and the value -1 is returned for negative numbers
+
+
+or maybe: row- wise max of a matrix
+rowMaxs(x, value = FALSE)
+
+```
+```{r}
+
+matrix_Ctrl_lof_df <- data.matrix(Ctrl_lof_df)
+matrix_Ctrl_lof_df
+
+
+
+##I have no clue yet but maybe something like this
+
+
+
+#a peak is defined as a local maxima with m points either side of it being smaller than it. hence, the bigger the parameter m, the more stringent is the peak funding procedure
+
+find_peaks <- function (x, m = 2){
+    shape <- diff(sign(diff(x, na.pad = FALSE)))
+    pks <- sapply(which(shape < 0), FUN = function(i){
+       z <- i - m + 1
+       z <- ifelse(z > 0, z, 1)
+       w <- i + m + 1
+       w <- ifelse(w < length(x), w, length(x))
+       if(all(x[c(z : i, (i + 2) : w)] <= x[i + 1])) return(i + 1) else return(numeric(0))
+    })
+     pks <- unlist(pks)
+     pks
+}
+
+Ctlr_Peaks <- find_peaks(Ctrl_lof_df)
+
 
 
 ```
