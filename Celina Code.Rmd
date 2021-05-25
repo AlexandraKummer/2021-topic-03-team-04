@@ -1,3 +1,5 @@
+
+=======
 ---
 title: "Celina Code"
 author: "Celina"
@@ -84,40 +86,163 @@ diff() with lag=1 calculates difference between 2nd element and 1st element and 
 
 sign R function returns the signs of numeric elements. The value 1 is returned for positive numbers, the value 0 is returned for zero, and the value -1 is returned for negative numbers
 
+ifelse(test, yes, no) -> returns a value with the same shape as test which is filled with elements selected from either yes or no depending on whether the element of test is TRUE or FALSE.
+
+
+length(x) -> Get or set the length of vectors
+
+
+
 
 or maybe: row- wise max of a matrix
 rowMaxs(x, value = FALSE)
 
 ```
+
+maxima alle bestimmen
+weighted mean über die verschiedenen maxima
+dann vergleich von 1 wert kontrolle mit 1 wert rnase zur shift detection
 ```{r}
 
-matrix_Ctrl_lof_df <- data.matrix(Ctrl_lof_df)
-matrix_Ctrl_lof_df
-
-
-
+##does not work
 ##I have no clue yet but maybe something like this
 
-
+test_vert <-c(10,13,30,25,80,65,50,40,20,20,30,40,30,35,50,30,20,10,30,20,40,30,20,20,10)
 
 #a peak is defined as a local maxima with m points either side of it being smaller than it. hence, the bigger the parameter m, the more stringent is the peak funding procedure
-
-find_peaks <- function (x, m = 2){
-    shape <- diff(sign(diff(x, na.pad = FALSE)))
+          
+                   
+  find_peaks <- function (x, m = 2){
+    
+    j = 1
+   for (j in 1:dim(x)[1]) {
+  y <- as.numeric(x[j,]) #converting the rows from our dataframe into a vector
+     
+    shape <- diff(sign(diff(y, na.pad = FALSE)))
     pks <- sapply(which(shape < 0), FUN = function(i){
-       z <- i - m + 1
-       z <- ifelse(z > 0, z, 1)
+       z <- i - m + 1 
+       z <- ifelse(z > 0, z, 1) #if z > 0 then z=z, if z < 0 z -> 1
        w <- i + m + 1
-       w <- ifelse(w < length(x), w, length(x))
-       if(all(x[c(z : i, (i + 2) : w)] <= x[i + 1])) return(i + 1) else return(numeric(0))
+       w <- ifelse(w < length(y), w, length(y))
+       if(all(y[c(z : i, (i + 2) : w)] <= y[i + 1])) return(i + 1) else return(numeric(0))
     })
      pks <- unlist(pks)
      pks
+     
+    }
+    j = j+1
+    
+     
+}
+  
+Ctlr_Peaks <- find_peaks(Ctrl_lof_df, m = 2)
+Ctlr_Peaks   
+  
+  
+#Alex function
+
+
+#with threshold
+
+
+max_detec_df <- function(Input_df, threshold){
+  j=1
+  temp_df <- as.data.frame(matrix(nrow=dim(Input_df)[1], ncol = dim(Input_df)[2]))#leere matrix
+  #leerer vektor
+  for (j in 1:dim(Input_df)[1]){
+    i = 1        #j soll die nummer der Zeile annehmen, um auf die Zeile im if statement zuzugreifen
+   while (i <= dim(Input_df)[2]){     #für eine Zeile weren alle spalten durchgetestet
+    if (i == 1){    #für die erste spalte, die nur rechts ein vergleichselement hat
+      if(Input_df[j,i] > Input_df[j,i+1] && Input_df[j,i] > threshold * max(Input_df[j,i])){
+        temp_df[j,i] <- i  #hier soll der leere Vektor als neues element die stelle des maximus bekommen
+      }else{
+        temp_df[j,i] <- 0  #wenn stelle nicht eingesetzt soll der Wert 0 rein, damit der Vektor weiterhin 25 elemente hat
+      }
+    }
+    if (i < dim(Input_df)[2]&& i!=1){
+      if(Input_df[j,i]>Input_df[j,i+1] && Input_df[j,i]> Input_df[j,i-1] && Input_df[j,i] > threshold * max(Input_df[j,i])){
+        temp_df[j,i] <- i
+      }else {
+       temp_df[j,i] <- 0
+      }
+    }
+    if (i == dim(Input_df)[2]){
+      if(Input_df[j,i]>Input_df[j,i-1] && Input_df[j,i] > threshold * max(Input_df[j,i])){
+        temp_df[j,i] <- i
+      }else{
+          temp_df[j,i] <- 0
+        }
+      }
+    i=i+1
+    }#nachdem der vektor für eine Zeile fertig ist, soll er in die entsprechenden Zeile der Matrixgefüllt werden
+  
+  }#j wird jetzt um 1 erhöht, der temp_vec wird mit den locations aus der neuen Zeile überschrieben und dann in die nächste Zeile der Matrix gefüllt
+  return(temp_df)#am Ende soll eine Martrix entstehen, die für jedes Protein den Vektor enthält
+  
 }
 
-Ctlr_Peaks <- find_peaks(Ctrl_lof_df)
+maxima_Ctrl <- max_detec_df(Ctrl_lof_df, 0.2)#code läuft nicht, ist also kot lul. irgendeine bedingung hat Länge > 1 und das füllen der MAtrix gibt Ersetzung hat die Länge 0
+maxima_Ctrl
 
 
+
+ 
+```
+
+```
+
+
+
+
+Alex Code
+```{r}
+
+test_matrix <- matrix(rep(test_vert, 3), byrow=TRUE, nrow=3, ncol=25)
+test_df <- data.frame(test_matrix)
+
+
+max_detec_df <- function(Input_df){
+  j=1
+  temp_df <- as.data.frame(matrix(nrow=dim(Input_df)[1], ncol = dim(Input_df)[2]))#leere matrix
+  #leerer vektor
+  for (j in 1:dim(Input_df)[1]){
+    i = 1#j soll die nummer der Zeile annehmen, um auf die Zeile im if statement zuzugreifen
+   while (i <= dim(Input_df)[2]){#für eine Zeile weren alle spalten durchgetestet
+    if (i == 1){#für die erste spalte, die nur rechts ein vergleichselement hat
+      if(Input_df[j,i] > Input_df[j,i+1]){
+        temp_df[j,i] <- i#hier soll der leere Vektor als neues element die stelle des maximus bekommen
+      }else{
+        temp_df[j,i] <- 0#wenn stelle nicht eingesetzt soll der Wert 0 rein, damit der Vektor weiterhin 25 elemente hat
+      }
+    }
+    if (i < dim(Input_df)[2]&& i!=1){
+      if(Input_df[j,i]>Input_df[j,i+1] && Input_df[j,i]> Input_df[j,i-1]){
+        temp_df[j,i] <- i
+      }else {
+       temp_df[j,i] <- 0
+      }
+    }
+    if (i == dim(Input_df)[2]){
+      if(Input_df[j,i]>Input_df[j,i-1]){
+        temp_df[j,i] <- i
+      }else{
+          temp_df[j,i] <- 0
+        }
+      }
+    i=i+1
+    }#nachdem der vektor für eine Zeile fertig ist, soll er in die entsprechenden Zeile der Matrixgefüllt werden
+  
+  }#j wird jetzt um 1 erhöht, der temp_vec wird mit den locations aus der neuen Zeile überschrieben und dann in die nächste Zeile der Matrix gefüllt
+  return(temp_df)#am Ende soll eine Martrix entstehen, die für jedes Protein den Vektor enthält
+  
+}
+
+test_lauf_zwei <- max_detec_df(test_df)#code läuft nicht, ist also kot lul. irgendeine bedingung hat Länge > 1 und das füllen der MAtrix gibt Ersetzung hat die Länge 0
+test_lauf_zwei
+
+```
+
+```{r}
 
 ```
 
