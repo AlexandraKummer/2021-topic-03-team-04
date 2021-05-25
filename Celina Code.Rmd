@@ -103,7 +103,6 @@ maxima alle bestimmen
 weighted mean über die verschiedenen maxima
 dann vergleich von 1 wert kontrolle mit 1 wert rnase zur shift detection
 ```{r}
-
 ##does not work
 ##I have no clue yet but maybe something like this
 
@@ -136,10 +135,11 @@ test_vert <-c(10,13,30,25,80,65,50,40,20,20,30,40,30,35,50,30,20,10,30,20,40,30,
 }
   
 Ctlr_Peaks <- find_peaks(Ctrl_lof_df, m = 2)
-Ctlr_Peaks   
-  
-  
-#Alex function
+Ctlr_Peaks
+```
+maxima detection with threshold, output as dataframe
+
+```{r}
 
 
 #with threshold
