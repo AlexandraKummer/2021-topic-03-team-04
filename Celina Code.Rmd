@@ -216,11 +216,14 @@ dataframes with corresponding values for the maxima
 
 max_value_func <- function(Input_df, x){
   
+  j=1
+  i=1
+  
   temp_max_df <- as.data.frame(matrix(nrow=dim(Input_df)[1], ncol = dim(Input_df)[2]))
   rownames(temp_max_df) <- rownames(Data_copy)
   colnames(temp_max_df) <- colnames(RNAse_Data_norm)
   
-  j=1
+  
 for (j in 1:dim(Input_df)[1]){
     i=1       
    while (i <= dim(Input_df)[2]){
@@ -234,17 +237,34 @@ for (j in 1:dim(Input_df)[1]){
      
      
    }
-    return(temp_max_df)
+    
+    j = j + 1
 }
-  j = j + 1
+  return(temp_max_df)
   }
 
 
 max_value_RNAse_mean <- max_value_func(maxima_RNAse_mean, RNAse_mean_df)     
 max_value_RNAse_mean
 
-     
+max_value_RNAse_median <- max_value_func(maxima_RNAse_median, RNAse_mean_df)     
+max_value_RNAse_median
+
+max_value_RNAse_lof <- max_value_func(maxima_RNAse_lof, RNAse_mean_df)     
+max_value_RNAse_lof
+
+max_value_Ctrl_mean <- max_value_func(maxima_Ctrl_mean, RNAse_mean_df)     
+max_value_Ctrl_mean
+
+max_value_Ctrl_median <- max_value_func(maxima_Ctrl_median, RNAse_mean_df)     
+max_value_Ctrl_median
+
+max_value_Ctrl_lof <- max_value_func(maxima_Ctrl_lof, RNAse_mean_df)     
+max_value_Ctrl_lof
+
+    
 ```
+
 
 ```{r}
 
