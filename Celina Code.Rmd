@@ -153,21 +153,21 @@ max_detec_df <- function(Input_df, threshold){
     i = 1        #j soll die nummer der Zeile annehmen, um auf die Zeile im if statement zuzugreifen
    while (i <= dim(Input_df)[2]){     #für eine Zeile weren alle spalten durchgetestet
     if (i == 1){    #für die erste spalte, die nur rechts ein vergleichselement hat
-      if(Input_df[j,i] > Input_df[j,i+1] && Input_df[j,i] > threshold * max(Input_df[j,i])){
+      if(Input_df[j,i] > Input_df[j,i+1] && Input_df[j,i] > threshold * max(Input_df[j,])){
         temp_df[j,i] <- i  #hier soll der leere Vektor als neues element die stelle des maximus bekommen
       }else{
         temp_df[j,i] <- 0  #wenn stelle nicht eingesetzt soll der Wert 0 rein, damit der Vektor weiterhin 25 elemente hat
       }
     }
     if (i < dim(Input_df)[2]&& i!=1){
-      if(Input_df[j,i]>Input_df[j,i+1] && Input_df[j,i]> Input_df[j,i-1] && Input_df[j,i] > threshold * max(Input_df[j,i])){
+      if(Input_df[j,i]>Input_df[j,i+1] && Input_df[j,i]> Input_df[j,i-1] && Input_df[j,i] > threshold * max(Input_df[j,])){
         temp_df[j,i] <- i
       }else {
        temp_df[j,i] <- 0
       }
     }
     if (i == dim(Input_df)[2]){
-      if(Input_df[j,i]>Input_df[j,i-1] && Input_df[j,i] > threshold * max(Input_df[j,i])){
+      if(Input_df[j,i]>Input_df[j,i-1] && Input_df[j,i] > threshold * max(Input_df[j,])){
         temp_df[j,i] <- i
       }else{
           temp_df[j,i] <- 0
@@ -208,9 +208,22 @@ maxima_Ctrl_lof
 
 
 
-
-
+```{bash}
 ```{r}
+
+ggplot(data.frame(t(RNAse_median_df)), aes(x=1:25))+
+  geom_line(aes(y=data.frame(t(RNAse_median_df))[,4]), colour="red")+
+  ggtitle("RS9 Median")+
+  xlab("Fractions")+
+  ylab("Normalized Protein Amount")+
+  scale_x_continuous(breaks=1:25)
+
+maxima_RNAse_median[4,]
+```
+
+```
+
+
 
 ```
 
