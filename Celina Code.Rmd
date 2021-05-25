@@ -276,6 +276,50 @@ ggplot(data.frame(t(RNAse_median_df)), aes(x=1:25))+
   scale_x_continuous(breaks=1:25)
 
 maxima_RNAse_median[4,]
+
+
+ggplot(data.frame(t(RNAse_median_df)), aes(x=1:25))+
+  geom_line(aes(y=data.frame(t(RNAse_median_df))[,1]), colour="red")+
+  ggtitle("SPB6_HUMAN Median")+
+  xlab("Fractions")+
+  ylab("Normalized Protein Amount")+
+  scale_x_continuous(breaks=1:25)
+
+maxima_RNAse_median[1,]
+
+
+ggplot(data.frame(t(RNAse_median_df)), aes(x=1:25))+
+  geom_line(aes(y=data.frame(t(RNAse_median_df))[,10]), colour="red")+
+  ggtitle("MYOME_HUMAN Median")+
+  xlab("Fractions")+
+  ylab("Normalized Protein Amount")+
+  scale_x_continuous(breaks=1:25)
+
+maxima_RNAse_median[10,]
+
+
+
+ggplot(data.frame(t(RNAse_median_df)), aes(x=1:25))+
+  geom_line(aes(y=data.frame(t(RNAse_median_df))[,2]), colour="red")+
+  ggtitle("CRYAB_HUMAN Median")+
+  xlab("Fractions")+
+  ylab("Normalized Protein Amount")+
+  scale_x_continuous(breaks=1:25)
+
+maxima_RNAse_median[2,]
+
+
+
+
+ggplot(data.frame(t(RNAse_lof_df)), aes(x=1:25))+
+  geom_line(aes(y=data.frame(t(RNAse_lof_df))[,2]), colour="red")+
+  ggtitle("CRYAB_HUMAN Median")+
+  xlab("Fractions")+
+  ylab("Normalized Protein Amount")+
+  scale_x_continuous(breaks=1:25)
+
+maxima_RNAse_lof[2,]
+
 ```
 
 ```
