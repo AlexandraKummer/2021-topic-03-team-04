@@ -180,11 +180,26 @@ max_detec_df <- function(Input_df, threshold){
   return(temp_df)#am Ende soll eine Martrix entstehen, die für jedes Protein den Vektor enthält
   
 }
-
-maxima_Ctrl <- max_detec_df(Ctrl_lof_df, 0.2)#code läuft nicht, ist also kot lul. irgendeine bedingung hat Länge > 1 und das füllen der MAtrix gibt Ersetzung hat die Länge 0
-maxima_Ctrl
+ 
 
 
+maxima_RNAse_mean <- max_detec_df(RNAse_mean_df, 0.2)
+maxima_RNAse_mean
+
+maxima_RNAse_median <- max_detec_df(RNAse_median_df, 0.2)
+maxima_RNAse_median
+
+maxima_RNAse_lof <- max_detec_df(RNAse_lof_df, 0.2)
+maxima_RNAse_lof
+
+maxima_Ctrl_mean <- max_detec_df(Ctrl_mean_df, 0.2)
+maxima_Ctrl_mean
+
+maxima_Ctrl_median <- max_detec_df(Ctrl_median_df, 0.2)
+maxima_Ctrl_median
+
+maxima_Ctrl_lof <- max_detec_df(Ctrl_lof_df, 0.2)
+maxima_Ctrl_lof
 
  
 ```
@@ -194,53 +209,6 @@ maxima_Ctrl
 
 
 
-Alex Code
-```{r}
-
-test_matrix <- matrix(rep(test_vert, 3), byrow=TRUE, nrow=3, ncol=25)
-test_df <- data.frame(test_matrix)
-
-
-max_detec_df <- function(Input_df){
-  j=1
-  temp_df <- as.data.frame(matrix(nrow=dim(Input_df)[1], ncol = dim(Input_df)[2]))#leere matrix
-  #leerer vektor
-  for (j in 1:dim(Input_df)[1]){
-    i = 1#j soll die nummer der Zeile annehmen, um auf die Zeile im if statement zuzugreifen
-   while (i <= dim(Input_df)[2]){#für eine Zeile weren alle spalten durchgetestet
-    if (i == 1){#für die erste spalte, die nur rechts ein vergleichselement hat
-      if(Input_df[j,i] > Input_df[j,i+1]){
-        temp_df[j,i] <- i#hier soll der leere Vektor als neues element die stelle des maximus bekommen
-      }else{
-        temp_df[j,i] <- 0#wenn stelle nicht eingesetzt soll der Wert 0 rein, damit der Vektor weiterhin 25 elemente hat
-      }
-    }
-    if (i < dim(Input_df)[2]&& i!=1){
-      if(Input_df[j,i]>Input_df[j,i+1] && Input_df[j,i]> Input_df[j,i-1]){
-        temp_df[j,i] <- i
-      }else {
-       temp_df[j,i] <- 0
-      }
-    }
-    if (i == dim(Input_df)[2]){
-      if(Input_df[j,i]>Input_df[j,i-1]){
-        temp_df[j,i] <- i
-      }else{
-          temp_df[j,i] <- 0
-        }
-      }
-    i=i+1
-    }#nachdem der vektor für eine Zeile fertig ist, soll er in die entsprechenden Zeile der Matrixgefüllt werden
-  
-  }#j wird jetzt um 1 erhöht, der temp_vec wird mit den locations aus der neuen Zeile überschrieben und dann in die nächste Zeile der Matrix gefüllt
-  return(temp_df)#am Ende soll eine Martrix entstehen, die für jedes Protein den Vektor enthält
-  
-}
-
-test_lauf_zwei <- max_detec_df(test_df)#code läuft nicht, ist also kot lul. irgendeine bedingung hat Länge > 1 und das füllen der MAtrix gibt Ersetzung hat die Länge 0
-test_lauf_zwei
-
-```
 
 ```{r}
 
