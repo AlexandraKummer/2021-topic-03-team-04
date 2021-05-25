@@ -89,8 +89,9 @@ noch kein Thresholding enthalten
 ```{r}
 test_vert <-c(10,13,30,25,80,65,50,40,20,20,30,40,30,35,50,30,20,10,30,20,40,30,20,20,10)
 plot(1:25,test_vert, type="l")
+
 max_detection <- function(Input_Data){
-  pos_vec <- numeric()
+    pos_vec <- numeric()
   while (i <= 25){
     if (i == 1){
       if(Input_Data[i] > input_Data[i+1]){
@@ -108,6 +109,7 @@ max_detection <- function(Input_Data){
       }
     }
     i=i+1
+    
   }
   return(pos_vec)
 }
@@ -129,9 +131,10 @@ test_df <- data.frame(test_matrix)
 
 max_detec_df <- function(Input_df){
   j=1
-  temp_matrix <- matrix(nrow=dim(Input_df)[1], ncol = dim(Input_df)[2])#leere matrix
-  temp_vec <- numeric()#leerer vektor
-  for (j in 1:dim(Input_df)[1]){#j soll die nummer der Zeile annehmen, um auf die Zeile im if statement zuzugreifen
+  temp_df <- as.data.frame(matrix(nrow=dim(Input_df)[1], ncol = dim(Input_df)[2]))#leere matrix
+  #leerer vektor
+  for (j in 1:dim(Input_df)[1]){
+    temp_vec <- numeric(length(0))#j soll die nummer der Zeile annehmen, um auf die Zeile im if statement zuzugreifen
    while (i <= 1:dim(Input_df)[2]){#für eine Zeile weren alle spalten durchgetestet
     if (i == 1){#für die erste spalte, die nur rechts ein vergleichselement hat
       if(Input_df[j,i] > Input_df[j,i+1]){
@@ -156,11 +159,101 @@ max_detec_df <- function(Input_df){
       }
     i=i+1
     }#nachdem der vektor für eine Zeile fertig ist, soll er in die entsprechenden Zeile der Matrixgefüllt werden
-    (temp_matrix[j,]<-temp_vec)
+    (temp_df[j,]<-temp_vec)
   }#j wird jetzt um 1 erhöht, der temp_vec wird mit den locations aus der neuen Zeile überschrieben und dann in die nächste Zeile der Matrix gefüllt
-  return(temp_matrix)#am Ende soll eine Martrix entstehen, die für jedes Protein den Vektor enthält
+  return(temp_df)#am Ende soll eine Martrix entstehen, die für jedes Protein den Vektor enthält
   
 }
 
 test_lauf_zwei <- max_detec_df(test_df)#code läuft nicht, ist also kot lul. irgendeine bedingung hat Länge > 1 und das füllen der MAtrix gibt Ersetzung hat die Länge 0
+
+```
+
+```{r}
+i=1
+max_detec_df <- function(Input_df){
+  j=1
+  temp_df <- as.data.frame(matrix(nrow=dim(Input_df)[1], ncol = dim(Input_df)[2]))#leeres Dataframe
+  for (j in 1:dim(Input_df)[1]){#j soll die nummer der Zeile annehmen, um auf die Zeile im if statement zuzugreifen
+    i=1
+   while (i <= dim(Input_df)[2]){#für eine Zeile weren alle spalten durchgetestet
+    if (i == 1){#für die erste Spalte, die nur rechts ein Vergleichselement hat
+      if(Input_df[j,i] > Input_df[j,i+1]){
+        temp_df[j,i] <- i#hier wird die Stelle in die entsprechende Stelle des Dataframes gesetzt
+      }else{
+        temp_df[j,i] <- 0#wenn Stelle kein Maximum ist, bekommt sie im Dataframe den Wert 0, damit die Dimension gleich bleibt
+      }
+    }
+    if (i < dim(Input_df)[2]&& i!=1){
+      if(Input_df[j,i]>Input_df[j,i+1] && Input_df[j,i]> Input_df[j,i-1]){
+        temp_df[j,i] <- i
+      }else {
+       temp_df[j,i] <- 0
+      }
+    }
+    if (i == dim(Input_df)[2]){
+      if(Input_df[j,i]>Input_df[j,i-1]){
+        temp_df[j,i] <- i
+      }else{
+          temp_df[j,i] <- 0
+        }
+      }
+    i=i+1
+    }
+  }#j wird jetzt um 1 erhöht, also das gleiche für die nächste Zeile gemacht
+  return(temp_df)#am Ende soll ein dataframe entstehen, das für jedes Protein den Vektor enthält
+  
+}
+
+test_lauf_zwei <- max_detec_df(Ctrl_median_df)
+
+#Threshold fehlt noch
+
+
+```
+
+```{r}
+rm(maxval_RNase_median)
+
+
+```
+
+```{r}
+maxima_values <- function(Input_df, maxima_df){
+  i=1
+  j=1
+  values_df <- as.data.frame(matrix(nrow=dim(Input_df)[1]), ncol=dim(Input_df)[2])
+  for (j in 1:dim(Input_df)){
+    i=1
+    while (i <= dim(maxima_df)[2]){
+      if(maxima_df[j,i]>0){
+        values_df[j,i]<-Input_df[j,i]
+      }else{
+        values_df[j,i]<-0
+      }
+      i=i+1
+    }
+  }
+  return(values_df)
+}
+
+maxval_RNase_median <- maxima_values(RNAse_median_df, maxima_RNAse_median)
+
+
+'a=1
+b=1
+rm(maxval_Ctrl_mean)
+maxval_Ctrl_mean <- as.data.frame(matrix(nrow=dim(Ctrl_mean_df)[1]), ncol=dim(Ctrl_mean_df)[2])
+for(a in 1:dim(Ctrl_mean_df)[1]){
+  b=1
+  while (b <= dim(Ctrl_mean_df)[2]){
+    if(maxima_Ctrl_mean[a,b]>0){
+      maxval_Ctrl_mean[a,b]<-Ctrl_mean_df[a,b]
+    }else{
+      maxval_Ctrl_mean[a,b]<-0
+    }
+    b=b+1
+  }
+}'
+
 ```
