@@ -147,7 +147,10 @@ maxima detection with threshold, output as dataframe
 
 max_detec_df <- function(Input_df, threshold){
   j=1
-  temp_df <- as.data.frame(matrix(nrow=dim(Input_df)[1], ncol = dim(Input_df)[2]))#leere matrix
+  temp_df <- as.data.frame(matrix(nrow=dim(Input_df)[1], ncol = dim(Input_df)[2]))
+  rownames(temp_df) <- rownames(Data_copy)
+    colnames(temp_df) <- colnames(RNAse_Data_norm)
+  #leere matrix
   #leerer vektor
   for (j in 1:dim(Input_df)[1]){
     i = 1        #j soll die nummer der Zeile annehmen, um auf die Zeile im if statement zuzugreifen
@@ -207,8 +210,42 @@ maxima_Ctrl_lof
 ```
 
 
-
+dataframes with corresponding values for the maxima
 ```{bash}
+```{r}
+
+max_value_func <- function(Input_df, x){
+  
+  temp_max_df <- as.data.frame(matrix(nrow=dim(Input_df)[1], ncol = dim(Input_df)[2]))
+  rownames(temp_max_df) <- rownames(Data_copy)
+  colnames(temp_max_df) <- colnames(RNAse_Data_norm)
+  
+  j=1
+for (j in 1:dim(Input_df)[1]){
+    i=1       
+   while (i <= dim(Input_df)[2]){
+     if(Input_df[j,i] > 0){
+       temp_max_df[j,i] <- x[j,i]
+     }
+     else {
+       temp_max_df[j,i] <- 0
+     }
+     i= i+1
+     
+     
+   }
+    return(temp_max_df)
+}
+  j = j + 1
+  }
+
+
+max_value_RNAse_mean <- max_value_func(maxima_RNAse_mean, RNAse_mean_df)     
+max_value_RNAse_mean
+
+     
+```
+
 ```{r}
 
 ggplot(data.frame(t(RNAse_median_df)), aes(x=1:25))+
