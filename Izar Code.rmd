@@ -565,44 +565,18 @@ iffy--if ratio is > 1 increase , if < 1 decrease etc
 ```{r}
 'IMPLEMENTATION OF THE MAXIMA LOC FUNCTION FOR FACTOR DIF OF Y VAL IN MAXIMA LOC IN CTRL & RNASE'
 
-maxima_logic_func <-function(x,threshhold){ # x = Data_vec , threshold = % global max that is recognized as a local max
-  
-  threshhold_val <- max(x)*threshhold #could define a threshold 
-  logic_return <-logical(length = length(x)) #logic vector 25x FALSE
-  i <- 1
-  while (i <= 25){
-# for the first element
-    if (i == 1){
-      if (x[i] > x[i+1] & x[i] > threshhold_val){ #implementation for the threshhold ?
-        logic_return[i] <- TRUE
-      }
-#for the elemets 2-24
-    }else if ( i < length(x)){
-        if (x[i] > x[i+1] & x[i] > x[i-1] & x[i] > threshhold_val){ #implementation for the threshhold ?
-          logic_return[i] <- TRUE
-        }
-#for the last element
-    }else if ( i == length(x)){
-      if (x[i] > x[i-1] & x[i] > threshhold_val){ #implementation for the threshhold ?
-        logic_return[i] <- TRUE
-      } 
-    }
-    i  <- i+1
-  }
-  return(logic_return) #returns the edited logic vector
-  
-}
 
 delta_Y_fac_func <- function(x,y,threshhold){
   #factor_df <-data.frame(numeric())
   factor_df <- data.frame(matrix(ncol=1))
+  colnames(factor_df)<-c("RNASe_factor")
    i <- 1
   while (i < dim(x)[1]){
-    temp_logic <- maxima_logic_func(x[i,],threshhold)
+    temp_logic <- maxima_logic_func(as.vector(x[i,]),threshhold)
     temp_max_loc_vec <- which(temp_logic)
-    temp_factor_df <-t(as.data.frame(x[i,temp_max_loc_vec]/y[i,temp_max_loc_vec]))
-    #row.names(temp_factor_df) <-paste(row.names(x)[i],"frac",i:length(temp_max_loc_vec),sep = "_")
-    factor_df <-rbind(factor_df,temp_factor_df)
+    temp_factor_df <-unname(t(x[i,][temp_max_loc_vec]/y[i,][temp_max_loc_vec]))
+    row.names(temp_factor_df,paste(row.names(x)[i],"frac",i:length(temp_max_loc_vec),sep = "_"))
+    factor_df <-rbind.data.frame(factor_df,temp_factor_df)
     i <-i+1
   }
    return(factor_df)
@@ -626,7 +600,23 @@ Ctrl_lof_Y_fac[1:dim(Ctrl_median_Y_fac),] <- 1
 ```
 
 ```{r}
+i<-1
+x <-RNAse_median_df
+y <-Ctrl_median_df
+threshhold <- 0.6
+factor_df <- data.frame(matrix(ncol=1))
+  #colnames(factor_df)<-c("RNASe_factor")
+unname(factor_df)
+temp_max_loc_vec <- which(temp_logic)
+temp_factor_df <-t(as.data.frame(unname(as.vector(x[i,][temp_max_loc_vec]/y[i,][temp_max_loc_vec]))))# "works till here"
 
+"problen in rbind"# rbind takes 2 dfs and merges by rows, need ncol=ncol
+if (ncol(factor_df)==ncol(temp_factor_df)){
+  
+    factor_df <-rbind(factor_df,temp_factor_df, make.names(c(paste(row.names(x)[i],"frac",i:length(temp_max_loc_vec),sep = "_"))))
+}
+    #row.names(temp_factor_df) <-c(paste(row.names(x)[i],"frac",i:length(temp_max_loc_vec),sep = "_"))
+    
 ```
 
 
