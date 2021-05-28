@@ -429,7 +429,7 @@ testing outputs:
 ```{r}
 'THIS SHIT FINALLY WORKS'
 
-maxima_loc_func <-function(x,threshhold){ # x = Data_vec , threshold = % global max that is recognized as a local max
+maxima_logic_func <-function(x,threshhold){ # x = Data_vec , threshold = % global max that is recognized as a local max
   
   threshhold_val <- max(x)*threshhold #could define a threshold 
   logic_return <-logical(length = length(x)) #logic vector 25x FALSE
@@ -437,17 +437,17 @@ maxima_loc_func <-function(x,threshhold){ # x = Data_vec , threshold = % global 
   while (i <= 25){
 # for the first element
     if (i == 1){
-      if (x[i] > x[i+1] & x[i] > threshhold_val){ #implementation for the threshhold ?
+      if (x[i] > x[i+1] & x[i] > threshhold_val){ 
         logic_return[i] <- TRUE
       }
 #for the elemets 2-24
     }else if ( i < length(x)){
-        if (x[i] > x[i+1] & x[i] > x[i-1] & x[i] > threshhold_val){ #implementation for the threshhold ?
+        if (x[i] > x[i+1] & x[i] > x[i-1] & x[i] > threshhold_val){ 
           logic_return[i] <- TRUE
         }
 #for the last element
     }else if ( i == length(x)){
-      if (x[i] > x[i-1] & x[i] > threshhold_val){ #implementation for the threshhold ?
+      if (x[i] > x[i-1] & x[i] > threshhold_val){ 
         logic_return[i] <- TRUE
       } 
     }
@@ -457,7 +457,7 @@ maxima_loc_func <-function(x,threshhold){ # x = Data_vec , threshold = % global 
   
 }
 
-exp_maxima_logic_max <- maxima_loc_func(exp_maxima_vec,0.6) #using maxima loc func on the tesing vector
+exp_maxima_logic_max <- maxima_logic_func(exp_maxima_vec,0.6) #using maxima loc func on the tesing vector
 
 Maxima_location_vector <- which(exp_maxima_logic_max) #returns positions of TRUE
 
@@ -555,13 +555,17 @@ while (n <= 25){
 ```
 
 
+
+
+planning implementation of the maxima detection function
+apply to row 1 of RNAse and row 1 of Ctrl
+iffy--Ctrl_row1 [maxima_loc_RNAse]/  RNAse_row1[maxima_loc_RNAse] same for ctrl
+iffy--if ratio is > 1 increase , if < 1 decrease etc 
+
 ```{r}
-'THIS SHIT FINALLY WORKS'
+'IMPLEMENTATION OF THE MAXIMA LOC FUNCTION FOR FACTOR DIF OF Y VAL IN MAXIMA LOC IN CTRL & RNASE'
 
-
-
-
-maxima_loc_func <-function(x,threshhold){ # x = Data_vec , threshold = % global max that is recognized as a local max
+maxima_logic_func <-function(x,threshhold){ # x = Data_vec , threshold = % global max that is recognized as a local max
   
   threshhold_val <- max(x)*threshhold #could define a threshold 
   logic_return <-logical(length = length(x)) #logic vector 25x FALSE
@@ -589,64 +593,42 @@ maxima_loc_func <-function(x,threshhold){ # x = Data_vec , threshold = % global 
   
 }
 
-maxima_df_func <- function(x,threshhold)
-n <-1
-while ( n <= dim(x)){
-     Output_df maxima_locas.vector(x[i,])
+delta_Y_fac_func <- function(x,y,threshhold){
+  #factor_df <-data.frame(numeric())
+  factor_df <- data.frame(matrix(ncol=1))
+   i <- 1
+  while (i < dim(x)[1]){
+    temp_logic <- maxima_logic_func(x[i,],threshhold)
+    temp_max_loc_vec <- which(temp_logic)
+    temp_factor_df <-t(as.data.frame(x[i,temp_max_loc_vec]/y[i,temp_max_loc_vec]))
+    #row.names(temp_factor_df) <-paste(row.names(x)[i],"frac",i:length(temp_max_loc_vec),sep = "_")
+    factor_df <-rbind(factor_df,temp_factor_df)
+    i <-i+1
+  }
+   return(factor_df)
   
-  
-  
-  n+1
 }
 
 
+RNAse_median_Y_fac <- delta_Y_fac_func(RNAse_median_df,Ctrl_median_df,0.2)
+RNAse_mean_Y_fac <- delta_Y_fac_func(RNAse_mean_df,Ctrl_mean_df,0.2)
+RNAse_lof_Y_fac <- delta_Y_fac_func(RNAse_lof_df,Ctrl_lof_df,0.2)
+
+Ctrl_median_Y_fac <-RNAse_median_Y_fac
+Ctrl_median_Y_fac[1:dim(Ctrl_median_Y_fac),] <- 1
+
+Ctrl_mean_Y_fac <-RNAse_mean_Y_fac
+Ctrl_mean_Y_fac[1:dim(Ctrl_median_Y_fac),] <- 1
+
+Ctrl_lof_Y_fac <-RNAse_lof_Y_fac
+Ctrl_lof_Y_fac[1:dim(Ctrl_median_Y_fac),] <- 1
 
 ```
 
-
-looking at alex cod
 ```{r}
 
-test_matrix <- matrix(rep(test_vert, 3), byrow=TRUE, nrow=3, ncol=25)
-test_df <- data.frame(test_matrix)
-
-
-max_detec_df <- function(x){
-  j=1
-  Input_df <- x
-  for (j in 1:dim(Input_df)[1]){#j soll die nummer der Zeile annehmen, um auf die Zeile im if statement zuzugreifen
-   while (i <= 1:dim(Input_df)[2]){#für eine Zeile weren alle spalten durchgetestet
-    if (i == 1){#für die erste spalte, die nur rechts ein vergleichselement hat
-      if(Input_df[j,i] > Input_df[j,i+1]){
-        Input_df[j,i] <- i #hier soll der leere Vektor als neues element die stelle des maximus bekommen
-      }else{
-        Input_df[j,i] <- 0#wenn stelle nicht eingesetzt soll der Wert 0 rein, damit der Vektor weiterhin 25 elemente hat
-      }
-    }
-    if (i < dim(Input_df)[2]&& i!=1){
-      if(Input_df[j,i]>Input_df[j,i+1] && Input_df[j,i]> Input_df[j,i-1]){
-        Input_df[j,i] <- i
-      }else {
-        Input_df[j,i] <- 0
-      }
-    }
-    if (i == dim(Input_df)[2]){
-      if(Input_df[j,i]>Input_df[j,i-1]){
-        Input_df[j,i] <- i
-      }else{
-        Input_df[j,i] <- 0
-        }
-      }
-    i=i+1
-    }#nachdem der vektor für eine Zeile fertig ist, soll er in die entsprechenden Zeile der Matrixgefüllt werden
-    
-  }#j wird jetzt um 1 erhöht, der temp_vec wird mit den locations aus der neuen Zeile überschrieben und dann in die nächste Zeile der Matrix gefüllt
-  return(temp_matrix)#am Ende soll eine Martrix entstehen, die für jedes Protein den Vektor enthält
-  
-}
-
-test_lauf_zwei <- max_detec_df(test_df)#code läuft nicht, ist also kot lul. irgendeine bedingung hat Länge > 1 und das füllen der MAtrix gibt Ersetzung hat die Länge 0
 ```
+
 
 
 
