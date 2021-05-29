@@ -401,16 +401,6 @@ focusing stat test on changes in fractions 19-25
 
 # Maxima detection
 
-
-the global maximum is easely accessible with the max(), the min with min() function
-we can acces the location with the which() function, and  we can order the data by size 1,2,3 etc 
-local maxima can be defined as =! global maximum and occuring after a decreasing trend on either side of the global maximum
-we can generte a test vecotor:
-exp_maxima_vec <-c(1,2,3,2,1,6,5,4,2,2,3,4,3,2,5,3,2,1,3,1,4,3,2,2,1)
-we expect the maxima to be at positions 3,6,12,15,19,21
-
-the input should be a vector containing the 25 fractions of normalized protein data
-
 *works generating maxima detection testing vector exp_maxima_vec
 ```{r}
 #test vector to look at a complex maxima detection
@@ -455,57 +445,9 @@ maxima_logic_func <-function(x,threshhold){ # x = Data_vec , threshold = % globa
   
 }
 
-exp_maxima_logic_max <- maxima_logic_func(exp_maxima_vec,0.6) #using maxima loc func on the tesing vector
 
-Maxima_location_vector <- which(exp_maxima_logic_max) #returns positions of TRUE
-
-exp_maxima_vec[Maxima_location_vector] #selection of the values of maxima with position vector
 
 ```
-
-an alternative to above function not tested yet
-```{r}
-
-
-maxima_loc_func <-function(x){
-  
-  logic_return <-logical(length = 25) #logic vector 25x FALSE
-  
-  for (i in x ){
-
-# for the first elemet
-    if (match(i,x) == 1){
-      if (x[i] > x[match(i,x)+1]){
-        logic_return[i] <- TRUE
-      }
-#for the elemets 2-24
-    }else if ( match(i,x) < length(x)){
-        if (i > x[match(i,x)+1] & i > x[match(i,x)-1]){
-          logic_return[i] <- TRUE
-        }
-#for the lase element
-    }else{
-      if (i > x[match(i,x)-1]){
-        logic_return[i] <- TRUE
-      } 
-    }
-  }
-  return(logic_return)
-}
-
-
-
-exp_maxima_logic_max <- maxima_loc_func(exp_maxima_vec)
- exp_maxima_logic_max
- 
- 
- 
-```
-
-
-
-
-
 
 contains dY_fac_func, input: x = Ctrl, y = Rnase, threshhols = threshhold
 Output: df with 3 cols: dY_fac, prot_num, max_loc
@@ -589,20 +531,7 @@ Ctrl_lof_one[,1] <- 1
 
 
 
-```{r}
-library(ggplot2)
-median_comp_gg_df <-as.data.frame(cbind(median_dY_fac[,1],Ctrl_median_one[,1]))
-ggplot(median_comp_gg_df, aes(x=1:6833, y=median_comp_gg_df[,1]))+
-  geom_point()+
-  ggtitle("Shift factors for Ctrl peaks vs RNAse")+
-  ylab("RNAse")+
-  xlab("Ctrl")
 
-
-
-hist(as.vector(median_comp_gg_df[,1]),)
-
-```
 
 Trying shit out
 ```{r}
@@ -666,6 +595,46 @@ Ctrl_lof_Y_fac <-RNAse_lof_Y_fac
 Ctrl_lof_Y_fac[1:dim(Ctrl_median_Y_fac),] <- 1
     
 ```
+
+an alternative to above function not tested yet
+```{r}
+
+
+maxima_loc_func <-function(x){
+  
+  logic_return <-logical(length = 25) #logic vector 25x FALSE
+  
+  for (i in x ){
+
+# for the first elemet
+    if (match(i,x) == 1){
+      if (x[i] > x[match(i,x)+1]){
+        logic_return[i] <- TRUE
+      }
+#for the elemets 2-24
+    }else if ( match(i,x) < length(x)){
+        if (i > x[match(i,x)+1] & i > x[match(i,x)-1]){
+          logic_return[i] <- TRUE
+        }
+#for the lase element
+    }else{
+      if (i > x[match(i,x)-1]){
+        logic_return[i] <- TRUE
+      } 
+    }
+  }
+  return(logic_return)
+}
+
+
+
+exp_maxima_logic_max <- maxima_loc_func(exp_maxima_vec)
+ exp_maxima_logic_max
+ 
+ 
+ 
+```
+
 
 
 
