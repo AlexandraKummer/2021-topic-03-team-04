@@ -589,6 +589,20 @@ Ctrl_lof_one[,1] <- 1
 
 
 
+```{r}
+library(ggplot2)
+median_comp_gg_df <-as.data.frame(cbind(median_dY_fac[,1],Ctrl_median_one[,1]))
+ggplot(median_comp_gg_df, aes(x=1:6833, y=median_comp_gg_df[,1]))+
+  geom_point()+
+  ggtitle("Shift factors for Ctrl peaks vs RNAse")+
+  ylab("RNAse")+
+  xlab("Ctrl")
+
+
+
+hist(as.vector(median_comp_gg_df[,1]),)
+
+```
 
 Trying shit out
 ```{r}
