@@ -239,7 +239,8 @@ Ctrl_lof_one <-lof_dY_fac
 Ctrl_lof_one[,1] <- 1
 
 ```
-
+if x < 1
+1/x * frac_num 
 
 
 
