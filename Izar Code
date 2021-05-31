@@ -46,3 +46,385 @@ while (n < 150){
 }
 colnames(ctrl_frac_df,paste("frac",0:25, sep = "_")) #error here too 
 ```       
+
+
+Trying shit out
+```{r}
+
+#i<-1
+#x <-RNAse_median_df
+#y <-Ctrl_median_df
+#threshhold <- 0.6
+#factor_df <- data.frame(matrix(ncol=1))
+  #colnames(factor_df)<-c("RNASe_factor")
+#unname(factor_df)
+#temp_max_loc_vec <- which(temp_logic)
+#temp_factor_df <-t(as.data.frame(unname(as.vector(x[i,][temp_max_loc_vec]/y[i,][temp_max_loc_vec]))))# "works till here"
+#colnames(temp_factor_df) <- colnames(factor_df)
+
+  
+ #   factor_df <-rbind(factor_df,temp_factor_df, )
+    #row.names(temp_factor_df) <-c(paste(row.names(x)[i],"frac",i:length(temp_max_loc_vec),sep = "_"))       '
+
+    
+#IMPLEMENTATION OF THE MAXIMA LOC FUNCTION FOR FACTOR DIF OF Y VAL IN MAXIMA LOC IN CTRL & RNASERNASE/CTRL
+
+
+#LUKAS: put second colum with prot number, thrid colum frac number 
+
+
+#delta_Y_fac_func <- function(x,y,threshhold){ #x = 
+ # factor_df <-data.frame(numeric())#,ncol = 3)
+
+#  colnames(factor_df)<-c("RNAse_factor")#',"Prot_num","frac_num"')
+ #  i <- 1
+ # while (i < dim(x)[1]){
+    #vector for selecting the maxima
+#    temp_max_loc_vec <- which(maxima_logic_func(x[i,],threshhold))
+ #   if (length(temp_max_loc_vec > 0)){
+  #  temp_factor_df <-t(as.data.frame(x[i,][temp_max_loc_vec]/y[i,][temp_max_loc_vec]))
+   # row.names(temp_factor_df) <-c(paste(row.names(x)[i],"frac",temp_max_loc_vec[1:length(temp_max_loc_vec)],sep = "_"))
+    
+#    }else{
+ #     temp_factor_df <-as.data.frame(NA,make.names(rownames(x)[i]))
+  #  }
+   # colnames(temp_factor_df)<-colnames(factor_df)
+    #factor_df <-rbind.data.frame(factor_df,temp_factor_df)
+     
+#    i <-i+1
+ # }
+  # return(factor_df)
+#}
+
+
+#RNAse_median_Y_fac <- delta_Y_fac_func(RNAse_median_df,Ctrl_median_df,0.2)
+#RNAse_mean_Y_fac <- delta_Y_fac_func(RNAse_mean_df,Ctrl_mean_df,0.2)
+#RNAse_lof_Y_fac <- delta_Y_fac_func(RNAse_lof_df,Ctrl_lof_df,0.2)
+
+#Ctrl_median_Y_fac <-RNAse_median_Y_fac
+#Ctrl_median_Y_fac[1:dim(Ctrl_median_Y_fac),] <- 1
+
+#Ctrl_mean_Y_fac <-RNAse_mean_Y_fac
+#Ctrl_mean_Y_fac[1:dim(Ctrl_median_Y_fac),] <- 1
+
+#Ctrl_lof_Y_fac <-RNAse_lof_Y_fac
+#Ctrl_lof_Y_fac[1:dim(Ctrl_median_Y_fac),] <- 1
+    
+```
+
+an alternative to above function not tested yet
+```{r}
+
+
+#  maxima_loc_func <-function(x){
+  
+ #   logic_return <-logical(length = 25) #logic vector 25x FALSE
+  
+  #  for (i in x ){
+
+  # for the first elemet
+   #   if (match(i,x) == 1){
+    #    if (x[i] > x[match(i,x)+1]){
+     #     logic_return[i] <- TRUE
+      #  }
+#for the elemets 2-24
+   #    }else if ( match(i,x) < length(x)){
+    #        if (i > x[match(i,x)+1] & i > x[match(i,x)-1]){
+     #       logic_return[i] <- TRUE
+      #   }
+#for the lase element
+ #   }else{
+  #    if (i > x[match(i,x)-1]){
+   #     logic_return[i] <- TRUE
+    #  } 
+#    }
+  #}
+ # return(logic_return)
+#}
+
+
+
+#exp_maxima_logic_max <- maxima_loc_func(exp_maxima_vec)
+ #exp_maxima_logic_max
+ 
+ 
+ 
+```
+#Wilcox
+*(work in progresss)
+Wilcox Comparison tests between RNAse and Ctrl ##results in wilcox_pval_df
+```{r}
+#library(rstatix)
+#library(stats)
+#NONE OF THIS WORKS the output of the wilcox function is a list, we need to access the statistic valueor the p.value
+
+#creating function to use with our cleaned data for applying wilcox
+#wilcox_apply_func <-function(x,y){
+ #   output_vec <- vector()
+  #  i <-1
+   # while(i <= 3680 ){
+    #taking rows and making them into vectors usable by the wicoxsonfunc
+  #  u <-unname(as.vector(as.matrix(x[i,]))) ''needs to be an unnamed vector''
+   # v <-unname(as.vector(as.matrix(y[i,])))
+    
+    #applyig wilcox to each set of paired control and RNASe vectors
+   # wilcox_val <- wilcox.test(u,v, exact = FALSE) ''works till here''
+                            
+    #generating an output vector to store the outputs 
+#    output_vec <- append(output_vec, wilcox_val$p.value, after = length(output_vec))   #the $p.value should access the list
+ #   i <-i+1
+  #  }
+    #saving the output vector as a dataframe with  dim 3680x1 from output_vec
+    #wilcox_scores_df <-data.frame(output_vec, row.names = row.names(x))
+    #colnames(wilcox_scores_df) <- c("Wilcox_score")
+    
+#}
+
+#median_wilcox <- wilcox_apply_func(RNAse_median_df,Ctrl_median_df)
+
+#mean_wilcox <- wilcox_apply_func(RNAse_mean_df,Ctrl_mean_df)
+
+
+
+
+#''fiddeling with the code''
+
+#    output_vec <- vector()
+#    i <-1
+#    while(i <= 3680 ){
+    #taking rows and making them into vectors usable by the wicoxsonfunc
+#    u <-unname(as.vector(as.matrix(RNAse_median_df[1,])))
+ #   v <-unname(as.vector(as.matrix(Ctrl_median_df[1,])))
+    
+    #applyig wilcox to each set of paired control and RNASe vectors
+ #   wilcox_val <- wilcox.test(u,v,exact = FALSE)
+                            # alternative = "two.sided",
+                            # mu = 0,
+                            # paired = TRUE,
+                            # exact = FALSE,
+                            # correct = FALSE,
+                            # conf.int = FALSE,
+                            # conf.level = 0.95)
+    #generating an output vector to store the outputs 
+#    append(output_vec, wilcox_val$p.value, after = length(output_vec))   #the $p.value should access the list
+ #   i <-i+1
+  #  }
+    #saving the output vector as a dataframe with  dim 3680x1 from output_vec
+#    wilcox_scores_df <-data.frame(output_vec, row.names = row.names(x))
+ #   colnames(wilcox_scores_df) <- c("Wilcox_score")
+    
+#}
+
+
+```
+
+#LOF gefummel ----
+*(work in progress)
+Trying to apply LOF/lof   ##results in NoOut_norm_RNAse_df & NoOut_norm_Ctrl_df
+```{r}
+#library(DDoutlier)
+#library(dbscan)
+#library(psych)
+
+#issues with applying DDoutlier::LOF and dbscan::lof 
+ #data.frame(apply(data.frame(norm_RNAse[,1],norm_RNAse[,2],norm_RNAse[,3]),1,lof))
+#Error in FUN(newX[, i], ...) : x needs to be a matrix or a dist object!
+ #data.frame(apply(data.frame(norm_RNAse[,1],norm_RNAse[,2],norm_RNAse[,3]),1,LOF))
+#Error in if (k >= n || k < 1) { : missing value where TRUE/FALSE needed''
+
+#creating empty dataframe to store results
+#NoOut_norm_RNAse_df <- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+
+#step 1 seperate the Raw Data into RNAse and Ctrl each with 3680x75 now we have rep 1,2,3 next to each other
+#step 2 apply(temp_vec,1,LOF_func) to a temp vec consisting of rep n,n+1,n+2
+#step 3 save into empty df'
+
+#LOF_func <-function(x){ #creating function usable in apply
+#x <- as.data.frame(x)
+#  return(lof(x,2))}
+#n <-1
+
+#LOF_func(as.data.frame(c(1,2,10)))
+
+
+
+
+#while (n < 75){
+#    temp_df <- as.matrix(norm_RNAse[,n],norm_RNAse[,n+1],norm_RNAse[,n+2])
+#    Output_df <-t(data.frame(apply(temp_df,1,LOF_func)))
+#    NoOut_norm_RNAse_df <- cbind(NoOut_norm_RNAse_df,Output_df)
+#    n <- n + 3
+#}
+#NoOut_norm_RNAse_df = NoOut_norm_RNAse_df[,-1]
+#colnames(NoOut_norm_RNAse_df) = c(colnames(norm_RNAse))
+
+
+#different approach
+
+#lof_apply_func <- function(x){
+ # 
+  #Output_df <- data.frame(matrix(nrow = nrow(x), ncol=0),row.names = row.names(x))
+   #     n <-1
+    #    while (n < 75){
+     #   temp_df <- data.frame(x[,n],x[,n+1],x[,n+2])
+      #    
+       #   for(i in length(row.names(x))){ 
+        #    u <- t(data.frame(temp_df[i,]))
+         #   temp_vec <- as.vector(LOF(u,2))
+          #  temp_Output_df <- rbind(t(data.frame(temp_vec)))
+          #}
+   
+  #      Output_df <- cbind(Output_df,temp_Output_df)
+   #      n <- n + 3
+    #    }
+     #   return(Output_df)
+#}
+
+#Manual run for error finding
+
+
+#temp_df <- data.frame(norm_RNAse[,4],norm_RNAse[,5],norm_RNAse[,6
+#    ])
+#u <- t(data.frame(temp_df[1,]))
+ #           temp_vec <- c(LOF(u,2)) 
+  #          temp_Output_df <- rbind(t(data.frame(temp_vec)))
+            
+            
+            
+
+# doesnt work either
+            
+#  lof_RNAse <- data.frame(matrix(nrow = 3680, ncol=0),row.names = row.names(norm_RNAse)) #creates df for outputdf to be added to 
+ #       n <-1
+  #      while (n < 75){
+   #       
+    #    temp_df <- data.frame(norm_RNAse[,n],norm_RNAse[,n+1],norm_RNAse[,n+2])# should be 3680x3 df first 3 colums to be iterated to with n 75
+          
+#        temp_Output_df <- data.frame(matrix(nrow = nrow(0)),ncol(3)) #maybe creating the df before solves something ?
+ #         for(i in 3680){ 
+  #         
+   #         u <- t(data.frame(temp_df[i,])) # should make a 1x3 df  for each row (i) in temp_df and feed into u 
+    #        
+     #       temp_vec <- as.vector(lof(u,2)) #should make length 3
+      #      
+       #     
+        #    temp_Output_df <- rbind(temp_Output_df,t(data.frame(temp_vec))) # temp_output_df should be 3680x3 from r bind the two dfs
+         # }
+   
+    #    lof_RNAse<- cbind(lof_RNAse,temp_Output_df)
+     #    n <- n + 3
+      #  }
+
+        
+        
+        
+
+
+```
+
+new start at lof function
+```{r}
+#library(DDoutlier)
+#library(dbscan)
+#library(psych)
+
+
+#exp_lof_func <- function(x){
+ #  n <-1
+ # while (n < 75){
+ # Output_df <-x
+ # temp_df <- data.frame(Output_df[,n],Output_df[,n+1],Output_df[,n+2])
+ #   m <- 1
+    
+#   while (m <= nrow(temp_df)) {
+ #   
+  #  temp_df<- LOF(as.data.frame(temp_df[m,]),3)
+   #   m <- m+1
+    #} 
+    
+#  Output_df[,n:n+2] <-temp_df[,1:3]
+ # i <-i+1
+  #}
+#}
+
+#exp_lof_func(norm_RNAse)
+```
+
+MONKEY LOF lUkas code
+```{r}
+
+
+#RNAse_Data_lof = as.data.frame(matrix(nrow = 3*3680, ncol=25))
+#rownames(RNAse_Data_lof) = rownames(RNAse_Data_norm)
+#colnames(RNAse_Data_lof) = colnames(RNAse_Data_norm)
+
+#i = 1
+#while (i <= dim(norm_RNAse)[1]) {
+ # for (j in 1:dim(RNAse_Data_norm)[2]) {
+  #  x <- as.matrix(c(RNAse_Data_norm[i,j],RNAse_Data_norm[i+1,j+1],RNAse_Data_norm[i+2,j]))
+   # lof_temp <-lof (x,2)
+    #RNAse_Data_lof[i,] <- lof_temp
+  #}
+  #i <- i + 3
+#}
+
+```
+
+
+*not yet necessary bc lof does not work yet
+Removing Values based on if Outlier or not ##results in clean_RNAse_df & clean_Ctrl_df'
+```{r}
+#modifying the LO factor df  to remove any value above  (arbitrary) 1.5, setting all values < 1.5 = 1 and all values >1.5 = 0
+#data_clean_func <- function(x,z,treshhold){ # x = data to clean # z = LOF output df RNASe or Ctrl #threshhold can be played around with #for signifacance of data
+ # treshhold_clean_func <- function(y){
+  #  if (y >= treshhold){
+   #   y <- NA
+#    }else{
+ #     y <- 1
+  #  }
+  #}
+  
+###  binary_removal_df <- data.frame(apply(z,1,treshhold_clean_func))
+  
+#  x*binary_removal_df
+  
+#}
+
+
+# i realized we might want to set 0 to NA before doing data cleaning think about it later
+#clean_RNAse_df <- data_clean_func(norm_RNAse,LOF_RNAse,1.5)
+#clean_RNAse_df[clean_RNAse_df == 0] <- NA
+#clean_Ctrl_df <- data_clean_func(norm_Ctrl,LOF_Ctrl,1.5)
+#clean_Ctrl_df[clean_Ctrl_df == 0] <- NA
+
+
+```
+*not yet necessary bc lof does not work yet 
+mean of RNAse and Ctrl reps  ## results in clean_mean_RNAse_df & clean_mean_Ctrl_df
+```{r}
+# creating mean_clean_RNAse_df 3860x25, normalized and cleaned of outlieres
+#mean_clean_RNAse_df<- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+#n<-2
+#while (n < 75){
+ #   temp_df <- data.frame(clean_RNAse_df[,n],clean_RNAse_df[,n+1],clean_RNAse_df[,n+2])
+  #  Output_df <-data.frame(apply(temp_df,1,mean))
+   # mean_clean_RNAse_df<- cbind(mean_clean_RNAse_df,Output_df)
+    #n <- n + 3
+#}
+#colnames(mean_clean_RNAse_df) = c(paste("RNAse","frac",0:25, sep = "_"))
+#mean_clean_RNAse_df = mean_clean_RNAse_df[,-1]
+
+
+# creating mean_clean_Ctrl_df 3860x25, normalized and cleaned of outlieres
+#mean_clean_Ctrl_df<- data.frame(matrix(nrow = 3680, ncol=1),row.names = row.names(Raw_Data))
+#n<-1
+#while (n < 75){
+#    temp_df <- data.frame(clean_Ctrl_df[,n],clean_Ctrl_df[,n+1],clean_Ctrl_df[,n+2])
+ #   Output_df <-data.frame(apply(temp_df,1,mean))
+  #  mean_clean_Ctrl_df<- cbind(mean_clean_Ctrl_df,Output_df)
+   # n <- n + 3
+#}
+#colnames(mean_clean_Ctrl_df) = c(paste("Ctrl","frac",0:25, sep = "_"))
+#mean_clean_Ctrl_df = mean_clean_Ctrl_df[,-1]
+```
+
