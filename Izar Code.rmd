@@ -220,13 +220,13 @@ dY_fac_func <- function(x,y,threshhold){ # x = Ctrl, y = RNAse, threshhold = tre
    return(factor_df)
 }
 
-median_dY_fac <- dY_fac_func(RNAse_median_df,Ctrl_median_df,0.2)
+median_dY_fac <- dY_fac_func(Ctrl_median_df,RNAse_median_df,0.2)
 median_dY_fac[-1,]
 
-mean_dY_fac <- dY_fac_func(RNAse_mean_df,Ctrl_mean_df,0.2)
+mean_dY_fac <- dY_fac_func(Ctrl_mean_df,RNAse_mean_df,0.2)
 mean_dY_fac[-1,]
 
-lof_dY_fac <- dY_fac_func(RNAse_lof_df,Ctrl_lof_df,0.2)
+lof_dY_fac <- dY_fac_func(Ctrl_lof_df,RNAse_lof_df,0.2)
 lof_dY_fac[-1,]
 
 Ctrl_median_one <-median_dY_fac
