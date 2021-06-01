@@ -229,6 +229,8 @@ mean_dY_fac[-1,]
 lof_dY_fac <- dY_fac_func(Ctrl_lof_df,RNAse_lof_df,0.2)
 lof_dY_fac[-1,]
 
+
+#igore these for now
 Ctrl_median_one <-median_dY_fac
 Ctrl_median_one[,1] <- 1
 
