@@ -212,11 +212,6 @@ test_lauf_zwei <- max_detec_df(Ctrl_median_df)
 
 ```
 
-```{r}
-rm(maxval_RNase_median)
-
-
-```
 
 dataframe, in dem nur die Proteinwerte an Stellen, wo ein Maxima ist, drin sind
 ```{r}
@@ -258,6 +253,58 @@ for(a in 1:dim(Ctrl_mean_df)[1]){
 }'
 
 ```
+
+
+```{r}
+
+max_value_RNAse_mean <- max_value_func(maxima_RNAse_mean, RNAse_mean_df)     
+max_value_RNAse_mean
+
+max_value_RNAse_median <- max_value_func(maxima_RNAse_median, RNAse_median_df)     
+max_value_RNAse_median
+
+max_value_RNAse_lof <- max_value_func(maxima_RNAse_lof, RNAse_lof_df)     
+max_value_RNAse_lof
+
+max_value_Ctrl_mean <- max_value_func(maxima_Ctrl_mean, Ctrl_mean_df)     
+max_value_Ctrl_mean
+
+max_value_Ctrl_median <- max_value_func(maxima_Ctrl_median, Ctrl_median_df)     
+max_value_Ctrl_median
+
+max_value_Ctrl_lof <- max_value_func(maxima_Ctrl_lof, Ctrl_lof_df)     
+max_value_Ctrl_lof
+
+```
+
+
+Finding y-shift-factor. Basically, subtracting protein amount in RNase by prot amount in ctrl at peak locations
+```{r}
+yshift_mean_df <- data.frame(as.matrix(max_value_RNAse_mean)-as.matrix(max_value_Ctrl_mean))
+
+  tempdf <- data.frame("Yshift", "Prot_num", "fraction")
+  colnames(tempdf)<- c("Yshift", "Prot_num", "fraction")
+  tempdf[-1,]
+  j=1
+  k=1
+  i=1
+  for(k in 1:dim(maxima_Ctrl_mean)[1]){
+      i=1
+     while(i <= dim(maxima_Ctrl_mean)[2]){
+       if(maxima_RNAse_mean[k,i]>0){
+        tempdf[j,1]<- (max_value_RNAse_mean[k,i]-max_value_Ctrl_mean[k,i])/max_value_RNAse_mean[k,i]
+        tempdf[j,2] <- k
+        tempdf[j,3]<- i
+        j=j+1
+    }
+      i=i+1
+     }
+    }
+yshift_mean_df = tempdf
+
+
+
+````
 
 
 Plotting example Proteins
@@ -308,6 +355,8 @@ graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 427)
 graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 428)
 graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 429)
 graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 430)
+
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 1)
 
 ```
 
