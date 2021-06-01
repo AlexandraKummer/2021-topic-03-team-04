@@ -255,6 +255,10 @@ norm_func = function(x) { #Input vector wird durch seine summe geteilt
 RNAse_Data_norm = t(data.frame(apply(RNAse_Data, 1, norm_func))) 
 
 Ctrl_Data_norm = t(data.frame(apply(Ctrl_Data, 1, norm_func)))
+
+#Remove the NAs that result from some Proteins having 0 Protein Amount in certain Repetitions.
+Ctrl_Data_norm[is.na(Ctrl_Data_norm)] <- 0
+RNAse_Data_norm[is.na(RNAse_Data_norm)] <- 0
 ```
 
 Normalizing with Izars version, so we have all the things we need going forward
@@ -264,7 +268,11 @@ T_P_S_vec_div_func <- function(x){
   T_P_S_vec = c(sum(x[seq(from =1, to = 150, by = 6)]),sum(x[seq(from =2, to = 150, by = 6)]),sum(x[seq(from =3, to = 150, by = 6)]),sum(x[seq(from =4, to = 150, by = 6)]),sum(x[seq(from =5, to = 150, by = 6)]),sum(x[seq(from =6, to = 150, by = 6)]))
   x/T_P_S_vec
 }
+
 Norm_Data_df <- t(data.frame(apply(Raw_Data,1,T_P_S_vec_div_func)))
+
+#Remove the NAs that result from some Proteins having 0 Protein Amount in certain Repetitions.
+Norm_Data_df[is.na(Norm_Data_df)] <- 0
 
 # Normailized RNAse only
 RNAse_select_vec <- c(seq(from =2, to = 150, by = 2))
