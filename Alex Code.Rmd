@@ -218,6 +218,7 @@ rm(maxval_RNase_median)
 
 ```
 
+dataframe, in dem nur die Proteinwerte an Stellen, wo ein Maxima ist, drin sind
 ```{r}
 maxima_values <- function(Input_df, maxima_df){
   i=1
@@ -257,3 +258,129 @@ for(a in 1:dim(Ctrl_mean_df)[1]){
 }'
 
 ```
+
+
+Plotting example Proteins
+```{r}
+graphics <- function(Ctrl, RNase, method, a){
+  Ctrl_rotated = data.frame(t(Ctrl))
+  RNase_rotated = data.frame(t(RNase))
+     plots <- ggplot(Ctrl_rotated, aes(x=1:25))+
+      geom_line(aes(y=Ctrl_rotated[,a]), colour="blue")+
+      geom_line(aes(y=RNase_rotated[,a]),colour="red")+
+      ggtitle(paste("Comparison of control (blue) and RNase (red)", method, rownames(RNase[a,]),"(Protein",a,")", sep=" "))+
+       theme(plot.title = element_text(size=11))+
+      xlab("Fraction")+
+      ylab("Normalized protein amount")+
+      scale_x_continuous(breaks=1:25)
+      return(plots)
+}
+```
+
+```{r}
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 400)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 401)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 402)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 403)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 405)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 406)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 407)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 408)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 409)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 410)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 411)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 412)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 413)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 414)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 415)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 416)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 417)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 418)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 419)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 420)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 421)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 422)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 423)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 424)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 425)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 426)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 427)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 428)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 429)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 430)
+
+```
+
+```{r}
+graphics(Ctrl_median_df,RNAse_median_df, "median", 400)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 401)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 402)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 403)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 404)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 405)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 406)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 407)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 408)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 409)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 410)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 411)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 412)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 413)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 414)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 415)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 416)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 417)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 418)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 419)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 420)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 421)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 422)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 423)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 424)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 425)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 426)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 427)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 428)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 429)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 430)
+
+```
+
+```{r}
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 400)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 401)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 402)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 403)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 404)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 405)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 406)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 407)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 408)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 409)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 410)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 411)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 412)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 413)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 414)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 415)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 416)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 417)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 418)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 419)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 420)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 422)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 423)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 424)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 425)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 426)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 427)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 428)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 429)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 430)
+```
+
+
+
+
+
+
