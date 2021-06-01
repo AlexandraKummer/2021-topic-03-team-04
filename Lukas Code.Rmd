@@ -263,47 +263,55 @@ Total_Protein_Sum = rowSums(Total_Protein_Data) # Calculate the Total amount of 
 Total_Protein_Sum
 barplot(Total_Protein_Sum)
 
-
-
-
-RNAse_Data_norm = RNAse_Data
-i = 1
-while (i <= dim(RNAse_Data)[1]) { #Alle Zeilen Durchgehen
-  for (j in 1:25) { # Teile alle Fractions of Rep1 durch Rep1 total protein sum.
-    RNAse_Data_norm[i,j] = RNAse_Data[i,j]/Total_Protein_Sum[4]
-  }
-  i = i+1
-  
-  for (j in 1:25) {# Teile alle Fractions of Rep2 durch Rep2 total protein sum.
-    RNAse_Data_norm[i,j] = RNAse_Data[i,j]/Total_Protein_Sum[5]
-  }
-  i = i+1
-  
-  for (j in 1:25) {# Teile alle Fractions of Rep3 durch Rep3 total protein sum.
-    RNAse_Data_norm[i,j] = RNAse_Data[i,j]/Total_Protein_Sum[4]
-  }
-  i = i+1
+#New Method
+norm_func = function(x) { #Input vector wird durch seine summe geteilt
+  x/sum(x) 
 }
+# Anwenden der normierung auf die Daten
+RNAse_Data_norm = t(data.frame(apply(RNAse_Data, 1, norm_func))) 
 
-# Jetzt das selbe nochmal für Ctrl
-Ctrl_Data_norm = Ctrl_Data
-i = 1
-while (i <= dim(Ctrl_Data)[1]) { #Alle Zeilen Durchgehen
-  for (j in 1:25) { # Teile alle Fractions of Rep1 durch Rep1 total protein sum.
-    Ctrl_Data_norm[i,j] = Ctrl_Data[i,j]/Total_Protein_Sum[1]
-  }
-  i = i+1
-  
-  for (j in 1:25) {# Teile alle Fractions of Rep2 durch Rep2 total protein sum.
-    Ctrl_Data_norm[i,j] = Ctrl_Data[i,j]/Total_Protein_Sum[2]
-  }
-  i = i+1
-  
-  for (j in 1:25) {# Teile alle Fractions of Rep3 durch Rep3 total protein sum.
-    Ctrl_Data_norm[i,j] = Ctrl_Data[i,j]/Total_Protein_Sum[3]
-  }
-  i = i+1
-}
+Ctrl_Data_norm = t(data.frame(apply(Ctrl_Data, 1, norm_func)))
+
+
+# Old method
+# RNAse_Data_norm = RNAse_Data
+# i = 1
+# while (i <= dim(RNAse_Data)[1]) { #Alle Zeilen Durchgehen
+#   for (j in 1:25) { # Teile alle Fractions of Rep1 durch Rep1 total protein sum.
+#     RNAse_Data_norm[i,j] = RNAse_Data[i,j]/Total_Protein_Sum[4]
+#   }
+#   i = i+1
+#   
+#   for (j in 1:25) {# Teile alle Fractions of Rep2 durch Rep2 total protein sum.
+#     RNAse_Data_norm[i,j] = RNAse_Data[i,j]/Total_Protein_Sum[5]
+#   }
+#   i = i+1
+#   
+#   for (j in 1:25) {# Teile alle Fractions of Rep3 durch Rep3 total protein sum.
+#     RNAse_Data_norm[i,j] = RNAse_Data[i,j]/Total_Protein_Sum[4]
+#   }
+#   i = i+1
+# }
+# 
+# # Jetzt das selbe nochmal für Ctrl
+# Ctrl_Data_norm = Ctrl_Data
+# i = 1
+# while (i <= dim(Ctrl_Data)[1]) { #Alle Zeilen Durchgehen
+#   for (j in 1:25) { # Teile alle Fractions of Rep1 durch Rep1 total protein sum.
+#     Ctrl_Data_norm[i,j] = Ctrl_Data[i,j]/Total_Protein_Sum[1]
+#   }
+#   i = i+1
+#   
+#   for (j in 1:25) {# Teile alle Fractions of Rep2 durch Rep2 total protein sum.
+#     Ctrl_Data_norm[i,j] = Ctrl_Data[i,j]/Total_Protein_Sum[2]
+#   }
+#   i = i+1
+#   
+#   for (j in 1:25) {# Teile alle Fractions of Rep3 durch Rep3 total protein sum.
+#     Ctrl_Data_norm[i,j] = Ctrl_Data[i,j]/Total_Protein_Sum[3]
+#   }
+#   i = i+1
+# }
 ```
 Eine Dataframe "Total_Protein_norm" wird erstellt, in dem die totale Protein Summe der einzelnen Fractions durch den Protzentualen Proteinanteil vom total Protein amount in der gesamten Repetition erstetzt wurde.
 
