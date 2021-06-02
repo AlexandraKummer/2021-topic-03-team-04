@@ -1,3 +1,478 @@
+<<<<<<< HEAD
+---
+title: "Alex Code"
+author: "Alex"
+date: "1 5 2021"
+output: html_document
+---
+Loading packages
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+```
+
+Creating plot: total protein in control vs fraction, rep1= blue, rep2= red, rep3= blue
+```{r}
+library("ggplot2")
+library("tidyverse")
+
+Total_Prot_Rotated <- t(Total_Protein_Data)
+Total_Prot_Rotated_df <- data.frame(Total_Prot_Rotated)
+
+ggplot(Total_Prot_Rotated_df, aes(x=1:25))+
+  geom_line(aes(y=Total_Prot_Rotated_df[,1]),colour="blue", label="Ctrl_Rep_1")+
+  geom_line(aes(y=Total_Prot_Rotated_df[,2]), colour="red", label="Ctrl_Rep_2")+
+  geom_line(aes(y=Total_Prot_Rotated_df[,3]), colour = "darkgreen", label = "Ctrl_Rep_3")+
+  ggtitle("Total protein amount of control repetition in every fraction")+
+  xlab("Fraction")+
+  ylab("Protein Amount")+
+  theme(legend.position = "right")+
+  scale_x_continuous(breaks=1:25)
+```
+
+Creating plot: total protein in RNAse vs fraction, rep1= blue, rep2= red, rep3= blue
+
+```{r}
+ggplot(Total_Prot_Rotated_df, aes(x=1:25))+
+  geom_line(aes(y=Total_Prot_Rotated_df[,4]),colour="blue")+
+  geom_line(aes(y=Total_Prot_Rotated_df[,5]), colour="red")+
+  geom_line(aes(y=Total_Prot_Rotated_df[,6]), colour = "darkgreen")+
+  scale_x_continuous(breaks=1:25)+
+  ggtitle("Total protein amount of RNAse repetitions in every fraction")+
+  ylab("Protein amount")+
+  xlab("Fraction")
+```
+Creating plot: total mean protein in RNAse & Ctrl vs fraction, RNAse = red, Ctrl = blue
+
+```{r}
+Total_Prot_Rotated_mean_df <- Total_Prot_Rotated_df %>%
+  mutate(mean_Ctrl = rowMeans(Total_Prot_Rotated_df[,1:3]))%>%
+  mutate(mean_RNAse = rowMeans(Total_Prot_Rotated_df[,4:6]))
+ggplot(Total_Prot_Rotated_mean_df, aes(x=1:25))+
+  geom_line(aes(y=Total_Prot_Rotated_mean_df[,7]), color = "blue")+
+  geom_line(aes(y=Total_Prot_Rotated_mean_df[,8]), color = "red")+
+  ggtitle("Comparison of total protein amount of control and RNAse")+
+  xlab("Fraction")+
+  ylab("Protein amount")+
+  scale_x_continuous(breaks = 1:25)
+```
+
+
+```{r}
+barplot(Total_Protein_Sum, ylab = "Protein amount", las = 2, cex.axis=0.5, cex.names=0.8, main = "Total Protein amount of repetitions")
+Total_Protein_Sum
+```
+```{r}
+ggplot(Total_Prot_norm_Rotated_df, aes(x=1:25))+
+  geom_line(aes(y=Total_Prot_norm_Rotated_df[,4]),colour="blue")+
+  geom_line(aes(y=Total_Prot_norm_Rotated_df[,5]), colour="red")+
+  geom_line(aes(y=Total_Prot_norm_Rotated_df[,6]), colour = "darkgreen")+
+  scale_x_continuous(breaks=1:25)+
+  ggtitle("Normalized protein amount of RNAse repetitions in every fraction")+
+  ylab("Protein amount")+
+  xlab("Fraction")
+
+ggplot(Total_Prot_norm_Rotated_df, aes(x=1:25))+
+  geom_line(aes(y=Total_Prot_norm_Rotated_df[,1]),colour="blue")+
+  geom_line(aes(y=Total_Prot_norm_Rotated_df[,2]), colour="red")+
+  geom_line(aes(y=Total_Prot_norm_Rotated_df[,3]), colour = "darkgreen")+
+  scale_x_continuous(breaks=1:25)+
+  ggtitle("Normalized protein amount of control repetitions in every fraction")+
+  ylab("Protein amount")+
+  xlab("Fraction")
+```
+
+
+Maxima Detection:
+Ähnlich zu Izars function, bloß gibt diese hier direkt einen Vektor mit der länge der gefundenen Maxima aus. 
+noch kein Thresholding enthalten
+```{r}
+test_vert <-c(10,13,30,25,80,65,50,40,20,20,30,40,30,35,50,30,20,10,30,20,40,30,20,20,10)
+plot(1:25,test_vert, type="l")
+
+max_detection <- function(Input_Data){
+    pos_vec <- numeric()
+  while (i <= 25){
+    if (i == 1){
+      if(Input_Data[i] > input_Data[i+1]){
+        pos_vec <- c(pos_vec, i)
+      }
+    }
+    if (i < 25){
+      if(Input_Data[i]>Input_Data[i+1] && Input_Data[i]> Input_Data[i-1]){
+        pos_vec <- c(pos_vec, i)
+      }
+    }
+    if (i==25){
+      if(Input_Data[i]>Input_Data[i-1]){
+        pos_vec <- c(pos_vec, i)
+      }
+    }
+    i=i+1
+    
+  }
+  return(pos_vec)
+}
+
+test_lauf <- max_detection(test_vert)
+
+#in diesem environment ist test_lauf komischer weise ein leerer vektor. Der 1zu1 kopierte code funktioniert in meinem rumprobier environment wunderbar.und gibt einen vektor mit 6 elementen (3,5,12,15,19,21)
+
+
+```
+
+
+
+Jetzt möchte ich versuchen, dass man die Maxima detection gleich auf ein Dataframe anwenden kann und dieses nicht erst in lauter Vectoren übertragen muss, auf die man einzeln die Function anwenden müsste
+```{r}
+test_matrix <- matrix(rep(test_vert, 3), byrow=TRUE, nrow=3, ncol=25)
+test_df <- data.frame(test_matrix)
+
+
+max_detec_df <- function(Input_df){
+  j=1
+  temp_df <- as.data.frame(matrix(nrow=dim(Input_df)[1], ncol = dim(Input_df)[2]))#leere matrix
+  #leerer vektor
+  for (j in 1:dim(Input_df)[1]){
+    temp_vec <- numeric(length(0))#j soll die nummer der Zeile annehmen, um auf die Zeile im if statement zuzugreifen
+   while (i <= 1:dim(Input_df)[2]){#für eine Zeile weren alle spalten durchgetestet
+    if (i == 1){#für die erste spalte, die nur rechts ein vergleichselement hat
+      if(Input_df[j,i] > Input_df[j,i+1]){
+        temp_vec <-c(temp_vec,i)#hier soll der leere Vektor als neues element die stelle des maximus bekommen
+      }else{
+        temp_vec <- c(temp_vec, 0)#wenn stelle nicht eingesetzt soll der Wert 0 rein, damit der Vektor weiterhin 25 elemente hat
+      }
+    }
+    if (i < dim(Input_df)[2]&& i!=1){
+      if(Input_df[j,i]>Input_df[j,i+1] && Input_df[j,i]> Input_df[j,i-1]){
+        temp_vec <- c(temp_vec, i)
+      }else {
+        temp_vec <- c(temp_vec, 0)
+      }
+    }
+    if (i == dim(Input_df)[2]){
+      if(Input_df[j,i]>Input_df[j,i-1]){
+        temp_vec <- c(temp_vec, i)
+      }else{
+          temp_vec <- c(temp_vec, 0)
+        }
+      }
+    i=i+1
+    }#nachdem der vektor für eine Zeile fertig ist, soll er in die entsprechenden Zeile der Matrixgefüllt werden
+    (temp_df[j,]<-temp_vec)
+  }#j wird jetzt um 1 erhöht, der temp_vec wird mit den locations aus der neuen Zeile überschrieben und dann in die nächste Zeile der Matrix gefüllt
+  return(temp_df)#am Ende soll eine Martrix entstehen, die für jedes Protein den Vektor enthält
+  
+}
+
+test_lauf_zwei <- max_detec_df(test_df)#code läuft nicht, ist also kot lul. irgendeine bedingung hat Länge > 1 und das füllen der MAtrix gibt Ersetzung hat die Länge 0
+
+```
+
+```{r}
+i=1
+max_detec_df <- function(Input_df){
+  j=1
+  temp_df <- as.data.frame(matrix(nrow=dim(Input_df)[1], ncol = dim(Input_df)[2]))#leeres Dataframe
+  for (j in 1:dim(Input_df)[1]){#j soll die nummer der Zeile annehmen, um auf die Zeile im if statement zuzugreifen
+    i=1
+   while (i <= dim(Input_df)[2]){#für eine Zeile weren alle spalten durchgetestet
+    if (i == 1){#für die erste Spalte, die nur rechts ein Vergleichselement hat
+      if(Input_df[j,i] > Input_df[j,i+1]){
+        temp_df[j,i] <- i#hier wird die Stelle in die entsprechende Stelle des Dataframes gesetzt
+      }else{
+        temp_df[j,i] <- 0#wenn Stelle kein Maximum ist, bekommt sie im Dataframe den Wert 0, damit die Dimension gleich bleibt
+      }
+    }
+    if (i < dim(Input_df)[2]&& i!=1){
+      if(Input_df[j,i]>Input_df[j,i+1] && Input_df[j,i]> Input_df[j,i-1]){
+        temp_df[j,i] <- i
+      }else {
+       temp_df[j,i] <- 0
+      }
+    }
+    if (i == dim(Input_df)[2]){
+      if(Input_df[j,i]>Input_df[j,i-1]){
+        temp_df[j,i] <- i
+      }else{
+          temp_df[j,i] <- 0
+        }
+      }
+    i=i+1
+    }
+  }#j wird jetzt um 1 erhöht, also das gleiche für die nächste Zeile gemacht
+  return(temp_df)#am Ende soll ein dataframe entstehen, das für jedes Protein den Vektor enthält
+  
+}
+
+test_lauf_zwei <- max_detec_df(Ctrl_median_df)
+
+#Threshold fehlt noch
+
+
+```
+
+
+dataframe, in dem nur die Proteinwerte an Stellen, wo ein Maxima ist, drin sind
+```{r}
+maxima_values <- function(Input_df, maxima_df){
+  i=1
+  j=1
+  values_df <- as.data.frame(matrix(nrow=dim(Input_df)[1]), ncol=dim(Input_df)[2])
+  for (j in 1:dim(Input_df)){
+    i=1
+    while (i <= dim(maxima_df)[2]){
+      if(maxima_df[j,i]>0){
+        values_df[j,i]<-Input_df[j,i]
+      }else{
+        values_df[j,i]<-0
+      }
+      i=i+1
+    }
+  }
+  return(values_df)
+}
+
+maxval_RNase_median <- maxima_values(RNAse_median_df, maxima_RNAse_median)
+
+
+'a=1
+b=1
+rm(maxval_Ctrl_mean)
+maxval_Ctrl_mean <- as.data.frame(matrix(nrow=dim(Ctrl_mean_df)[1]), ncol=dim(Ctrl_mean_df)[2])
+for(a in 1:dim(Ctrl_mean_df)[1]){
+  b=1
+  while (b <= dim(Ctrl_mean_df)[2]){
+    if(maxima_Ctrl_mean[a,b]>0){
+      maxval_Ctrl_mean[a,b]<-Ctrl_mean_df[a,b]
+    }else{
+      maxval_Ctrl_mean[a,b]<-0
+    }
+    b=b+1
+  }
+}'
+
+```
+
+
+```{r}
+
+max_value_RNAse_mean <- max_value_func(maxima_RNAse_mean, RNAse_mean_df)     
+max_value_RNAse_mean
+
+max_value_RNAse_median <- max_value_func(maxima_RNAse_median, RNAse_median_df)     
+max_value_RNAse_median
+
+max_value_RNAse_lof <- max_value_func(maxima_RNAse_lof, RNAse_lof_df)     
+max_value_RNAse_lof
+
+max_value_Ctrl_mean <- max_value_func(maxima_Ctrl_mean, Ctrl_mean_df)     
+max_value_Ctrl_mean
+
+max_value_Ctrl_median <- max_value_func(maxima_Ctrl_median, Ctrl_median_df)     
+max_value_Ctrl_median
+
+max_value_Ctrl_lof <- max_value_func(maxima_Ctrl_lof, Ctrl_lof_df)     
+max_value_Ctrl_lof
+
+```
+
+
+Finding y-shift-factor. Basically, subtracting protein amount in RNase by prot amount in ctrl at peak locations
+```{r}
+
+  tempdf <- data.frame("Yshift", "Prot_num", "fraction")
+  colnames(tempdf)<- c("Yshift", "Prot_num", "fraction")
+  tempdf[-1,]
+  j=1
+  k=1
+  i=1
+  for(k in 1:dim(maxima_Ctrl_mean)[1]){
+      i=1
+     while(i <= dim(maxima_Ctrl_mean)[2]){
+       if(maxima_RNAse_mean[k,i]>0){
+        tempdf[j,1]<- (max_value_RNAse_mean[k,i]-max_value_Ctrl_mean[k,i])/max_value_RNAse_mean[k,i]
+        tempdf[j,2] <- k
+        tempdf[j,3]<- i
+        j=j+1
+    }
+      i=i+1
+     }
+    }
+yshift_mean_df = tempdf
+
+
+
+````
+
+```{r}
+
+ y_shift_func <- function(input_RNase, input_Ctrl){
+
+  tempdf <- data.frame("Yshift", "Prot_num", "fraction")
+  colnames(tempdf)<- c("Yshift", "Prot_num", "fraction")
+ 
+  j=1
+  k=1
+  i=1
+  for(k in 1:dim(input_Ctrl)[1]){
+      i=1
+     while(i <= dim(input_Ctrl)[2]){
+       if(input_Ctrl[k,i]>0){
+        tempdf[j,1]<- input_RNase[k,i]/input_Ctrl[k,i]
+        tempdf[j,2] <- k
+        tempdf[j,3]<- i
+        j=j+1
+    }
+      i=i+1
+     }
+    }
+yshift_mean_df = tempdf
+
+}
+
+
+
+y_shift_mean_ <- y_shift_func(max_value_Ctrl_mean, max_value_RNAse_mean)
+y_shift_mean_
+
+
+````
+
+
+
+Plotting example Proteins
+```{r}
+graphics <- function(Ctrl, RNase, method, a){
+  Ctrl_rotated = data.frame(t(Ctrl))
+  RNase_rotated = data.frame(t(RNase))
+     plots <- ggplot(Ctrl_rotated, aes(x=1:25))+
+      geom_line(aes(y=Ctrl_rotated[,a]), colour="blue")+
+      geom_line(aes(y=RNase_rotated[,a]),colour="red")+
+      ggtitle(paste("Comparison of control (blue) and RNase (red)", method, rownames(RNase[a,]),"(Protein",a,")", sep=" "))+
+       theme(plot.title = element_text(size=11))+
+      xlab("Fraction")+
+      ylab("Normalized protein amount")+
+      scale_x_continuous(breaks=1:25)
+      return(plots)
+}
+```
+
+```{r}
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 400)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 401)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 402)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 403)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 405)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 406)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 407)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 408)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 409)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 410)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 411)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 412)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 413)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 414)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 415)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 416)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 417)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 418)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 419)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 420)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 421)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 422)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 423)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 424)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 425)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 426)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 427)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 428)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 429)
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 430)
+
+graphics(Ctrl_mean_df, RNAse_mean_df, "mean", 1)
+
+```
+
+```{r}
+graphics(Ctrl_median_df,RNAse_median_df, "median", 400)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 401)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 402)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 403)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 404)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 405)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 406)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 407)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 408)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 409)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 410)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 411)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 412)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 413)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 414)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 415)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 416)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 417)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 418)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 419)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 420)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 421)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 422)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 423)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 424)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 425)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 426)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 427)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 428)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 429)
+graphics(Ctrl_median_df,RNAse_median_df, "median", 430)
+
+```
+
+```{r}
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 400)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 401)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 402)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 403)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 404)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 405)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 406)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 407)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 408)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 409)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 410)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 411)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 412)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 413)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 414)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 415)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 416)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 417)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 418)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 419)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 420)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 422)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 423)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 424)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 425)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 426)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 427)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 428)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 429)
+graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 430)
+```
+
+
+```{r}
+
+
+
+````
+
+
+
+=======
 ---
 title: "Alex Code"
 author: "Alex"
@@ -432,3 +907,4 @@ graphics(Ctrl_lof_df, RNAse_lof_df, "lof", 430)
 
 
 
+>>>>>>> 6db0eb0e9a37f3f6b62d9792490d75867062dba6
